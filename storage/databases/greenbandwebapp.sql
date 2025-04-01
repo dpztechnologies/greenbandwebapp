@@ -36,7 +36,7 @@ CREATE TABLE `system_administrators` (
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone_no` (`phone_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

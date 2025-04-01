@@ -3,7 +3,7 @@ const http = require("http");
 const port = 9000;
 const mysql = require("mysql");
 
-const DB = require("./database.js");
+const DB = require("./database.cjs");
 
 let profiles = [
     {
@@ -44,32 +44,13 @@ conn.connect(err => {
 });
 */
 
-function insert(data, table) {
-    let cols = "";
-    let pstmt = "";
-    let i = 1;
-    let sql = `INSERT INTO ${table} `;
-    data.forEach((item, key) => {
-        for (let x in item) {
-            if (key === 0) {
-                cols += `'${x}'`;
-                pstmt += "?";
-                if (i < Object.keys(item).length) {
-                    cols += ",";
-                    pstmt += ",";
-                }
-            }
-            i++;
-        }
+
+
+(async () => {
+    profiles.forEach((profile) => {
+        let db = DB.use().insert().into('system_admins', profile);
     });
-    sql += `(${cols}) VALUES (${pstmt})`;
-    return sql;
-}
-
-
-let database = new DB();
-
-database.query();
+})();
 
 /*
 http.createServer((req, res) => {
