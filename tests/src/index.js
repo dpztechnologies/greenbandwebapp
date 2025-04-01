@@ -66,6 +66,7 @@ function insert(data, table) {
     return sql;
 }
 
+
 let database = new DB();
 
 database.query();
