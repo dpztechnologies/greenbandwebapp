@@ -1,0 +1,20 @@
+
+@font-face {
+    font-family: poppins-regular;
+    src: url(../fonts/poppins/Poppins-Regular.ttf);
+}
+
+:root{
+--background-color:#E5E5E5;
+--sub-heading-font-size:22px;
+--sub-heading-font-weight:500;
+--default-font-size:16px;
+--font-family:poppins-regular;
+--primary:#76009f;
+
+}
+body{
+    background-color: var(--background-color);
+    font-family: var(--font-family);
+    font-size:var(--default-font-size) ;
+}
