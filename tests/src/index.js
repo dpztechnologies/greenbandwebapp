@@ -44,13 +44,20 @@ conn.connect(err => {
 });
 */
 
+/*
+(async () => {
+    profiles.forEach(profile => {
+        let db = DB.use().insert().into("system_admins", profile);
+    });
+})();
+*/
 
 
 (async () => {
-    profiles.forEach((profile) => {
-        let db = DB.use().insert().into('system_admins', profile);
-    });
+    let db = await DB.use().select(["*"]).from("system_admins", true);
+    console.log(db.getResults());
 })();
+
 
 /*
 http.createServer((req, res) => {

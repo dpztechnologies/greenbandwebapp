@@ -95,16 +95,7 @@ class Database {
 
 
     #generatePreparedStmt(data) {
-        let pstmt = ''
-        let x = 1;
-        Object.keys(data).forEach(key => {
-            pstmt += '?'
-            if (x < Object.keys(data).length) {
-                pstmt += ','
-            }
-            x++;
-        });
-        return pstmt
+      return Object.keys(data).fill('?').join(',')
     }
 
 
