@@ -4,17 +4,43 @@
 }
 
 :root {
-    --background-color: #E5E5E5;
+    --background-color: #e5e5e5;
     --sub-heading-font-size: 22px;
-    --sub-heading-font-weight: 500;
+    --sub-heading-font-weight: 600;
     --default-font-size: 16px;
     --font-family: poppins-regular;
     --primary: #76009f;
-
+    --primary-opaque: #76009f40;
 }
 
 body {
     background-color: var(--background-color);
     font-family: var(--font-family);
-    font-size: var(--default-font-size);
+    font-size: var(--default-font-size) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary) !important;
+}
+
+h3 {
+    font-size: var(--sub-heading-font-size);
+    font-weight: var(--sub-heading-font-weight);
+}
+
+button[type="submit"] {
+    border-color: var(--primary);
+}
+
+input {
+    font-size: var(--default-font-size) !important;
+}
+
+input:focus {
+    border-color: var(--primary)!important;
+    box-shadow: 0 0 0 0.25rem var(--primary-opaque) !important;
+}
+
+.h-100vh {
+    height: 100vh;
 }
