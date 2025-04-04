@@ -1,56 +1,42 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Document</title>
-<link rel="stylesheet" href="../../../resources/lib/bootstrap.css" />
-<link rel="stylesheet" href="../../../resources/custom/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../resources/lib/bootstrap.css" />
+  <link rel="stylesheet" href="../../../resources/custom/css/style.css" />
 </head>
 
 <body>
-<div
-class="container d-flex justify-content-center align-items-center my-5 p-2"
->
-<div class="col-md-6 col-12">
-<div class="card shadow-sm">
-<div class="card-header bg-white">
-<h3 class="text-center p-3">Greenband Web App</h3>
-</div>
-<div class="card-body p-3">
-<form method="POST">
-<div class="form-group my-4 my-md-3">
-<input
-type="email"
-class="form-control py-3"
-placeholder="Enter Email"
-/>
-</div>
-<div class="form-group my-4 my-md-3">
-<input
-type="password"
-class="form-control py-3"
-placeholder="Enter OTP"
-/>
-</div>
-<button
-type="submit"
-class="btn btn-primary mt-1 mb-4 p-2 w-100"
->
-Log in
-</button>
-<div class="mb-4">
-<a href="#" class="text-underline text-secondary">Not registered</a>
-</div>
-</form>
-</div>
-</div>
-</div>
-</div>
+  <div class="container d-flex justify-content-center align-items-center my-5 p-2">
+    <div class="col-md-4 col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h3 class="text-center p-3">Greenband Web App</h3>
+        </div>
+        <div class="card-body p-3">
+          <form method="POST" id="loginForm" enctype="multipart/form-data">
+            <div class="form-group my-4 my-md-3">
+              <input type="email" class="form-control py-3" name="email" placeholder="Enter Email" />
+            </div>
+            <div class="form-group my-4 my-md-3">
+              <input type="password" class="form-control py-3" name="otp" placeholder="Enter OTP" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-1 mb-4 p-2 w-100">
+              Log in
+            </button>
+            <div class="mb-4">
+              <a href="#" class="text-underline text-secondary">Not registered</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<script
-type="module"
-src="../../../resources/custom/js/login.js"
-></script>
+  <script type="module" src="../../../resources/custom/js/login.js"></script>
 </body>
+
 </html>

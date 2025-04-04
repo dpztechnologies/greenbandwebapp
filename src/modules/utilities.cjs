@@ -1,4 +1,4 @@
-const { FilePaths, MinRandom, MaxRandom } = require('../../tests/constants.cjs');
+const { FilePaths, MinRandom, MaxRandom } = require('../config/constants.cjs');
 
 /**
  * @author DPZTechnologies

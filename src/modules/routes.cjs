@@ -3,7 +3,9 @@ const path = require('path');
 const fs = require('fs').promises;
 const dotenv = require('dotenv').config({ path: path.resolve("../.env") });
 const url = require('url');
-const { MimeTypes, StaticFilePath } = require('../../tests/constants.cjs')
+const { MimeTypes, StaticFilePath } = require('../config/constants.cjs')
+const querystring = require('querystring');
+const Busboy = require('busboy');
 
 
 /**
@@ -39,18 +41,19 @@ class RouteResolver {
     const parsedURL = url.parse(req.url, true);
     const urlPath = parsedURL.pathname;
     const method = req.method.toLowerCase();
-    //Check if request is a static file ie (css, js)
     const extname = path.extname(urlPath).toLowerCase();
     if (Object.keys(MimeTypes).includes(extname)) {
       await this.serveStaticFile(urlPath, res);
       return;
     }
-    //Verify route exists and call method handler
+
+    if (method === 'post') {
+      await this.parseBody(req, res);
+    }
+
     if (this.routes[urlPath] && this.routes[urlPath][method]) {
-      //Call urlPath handler
       this.routes[urlPath][method](req, res);
     } else {
-      //Return a 404 message if route is invalid
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Invalid route / method' }))
     }
@@ -64,22 +67,93 @@ class RouteResolver {
   async serveStaticFile(filePath, res) {
     const extname = path.extname(filePath).toLowerCase();
     const contentType = MimeTypes[extname] || 'application/octet-stream'
-    //Resolve path to file
     const fullFilePath = path.join(StaticFilePath, filePath);
     try {
-      //Check file exists
       await fs.access(fullFilePath);
-      //Read and serve file if exists
       const data = await fs.readFile(fullFilePath);
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(data);
     } catch (err) {
-      //File does not exist throw an error
       res.writeHead(404, { 'Content-type': 'text/html' });
       res.end('<h1>404 not found</h1>')
     }
 
   }
+
+
+  /**
+   * Parses the body of the incoming request based on its content type.
+   * Handles multipart/form-data using Busboy, as well as JSON and x-www-form-urlencoded formats.
+   * 
+   * @param {Request} req - The incoming request object.
+   * @param {Response} res - The outgoing response object.
+   * @returns {Promise} - A promise that resolves when the body has been successfully parsed.
+   */
+  async parseBody(req, res) {
+    const contentType = req.headers['content-type'];
+
+    if (!contentType) {
+      resolve();
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      if (contentType.includes('multipart/form-data')) {
+        const busboy = Busboy({ headers: req.headers });
+
+        req.body = {};
+        req.files = {};
+
+        busboy.on('field', (fieldname, value) => {
+          req.body[fieldname] = value;
+        });
+
+        busboy.on('finish', () => {
+          resolve();
+        });
+
+        busboy.on('error', (err) => {
+          console.error('Error parsing multipart form data:', err);
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Invalid multipart data' }));
+          reject(err);
+        });
+        req.pipe(busboy);
+      } else {
+        let data = '';
+
+        req.on('data', chunk => {
+          data += chunk;
+        });
+
+        req.on('end', () => {
+          try {
+            switch (true) {
+              case contentType.includes('application/json') && data:
+                req.body = JSON.parse(data);
+                return resolve();
+
+              case contentType.includes('application/x-www-form-urlencoded'):
+                req.body = querystring.parse(data);
+                return resolve();
+
+              default:
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'Unsupported content type' }));
+                return reject(new Error('Unsupported content type'));
+            }
+          } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: "Invalid data format" }));
+            return reject(err);
+          }
+        });
+      }
+    });
+  }
+
+
+
 }
 
 class RouteProvider {
