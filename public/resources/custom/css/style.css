@@ -1,17 +1,4 @@
-@font-face {
-    font-family: poppins-regular;
-    src: url(../../fonts/poppins/Poppins-Regular.ttf);
-}
-
-:root {
-    --background-color: #e5e5e5;
-    --sub-heading-font-size: 22px;
-    --sub-heading-font-weight: 600;
-    --default-font-size: 16px;
-    --font-family: poppins-regular;
-    --primary: #76009f;
-    --primary-opaque: #76009f40;
-}
+@import url(root.css);
 
 body {
     background-color: var(--background-color);
@@ -19,17 +6,10 @@ body {
     font-size: var(--default-font-size) !important;
 }
 
-.btn-primary {
-    background-color: var(--primary) !important;
-}
 
 h3 {
     font-size: var(--sub-heading-font-size);
-    font-weight: var(--sub-heading-font-weight);
-}
-
-button[type="submit"] {
-    border-color: var(--primary);
+    font-family: var(--font-family-semi-bold);
 }
 
 input {
@@ -37,10 +17,41 @@ input {
 }
 
 input:focus {
-    border-color: var(--primary)!important;
+    border-color: var(--primary) !important;
     box-shadow: 0 0 0 0.25rem var(--primary-opaque) !important;
 }
 
-.h-100vh {
-    height: 100vh;
+.center-on-desktop-top-on-mobile {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 3rem;
+    /* top spacing for mobile */
+}
+
+.btn-primary {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+
+
+.card,
+.card-header {
+    border-radius: var(--default-border-radius) !important;
+}
+
+.card-header {
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+}
+
+
+
+@media (min-width: 768px) {
+    .center-on-desktop-top-on-mobile {
+        align-items: center;
+        padding-top: 0rem;
+        /* remove top spacing on desktop */
+    }
 }

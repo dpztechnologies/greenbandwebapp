@@ -20,10 +20,13 @@ async function postData(options) {
             const data = await response.json();
             console.log(data);
         } else {
-            let errorText = await response.text()
-            throw new Error("Network Error: " + errorText)
+            let error = JSON.parse(await response.text())
+            let errorInput = document.querySelector(`input[name="${error.handler}"]`);
+            errorInput.classList.add("is-invalid");
+            let errorHandler = errorInput.nextElementSibling;
+            errorHandler.innerHTML = error.message;
         }
     } catch (err) {
-        console.err(err.message);
+        console.error(err.message);
     }
 }

@@ -10,19 +10,21 @@
 </head>
 
 <body>
-  <div class="container d-flex justify-content-center align-items-center my-5 p-2">
+  <div id="loginFormContainer" class="container center-on-desktop-top-on-mobile">
     <div class="col-md-4 col-12">
       <div class="card shadow-sm">
-        <div class="card-header bg-white">
-          <h3 class="text-center p-3">Greenband Web App</h3>
+        <div class="card-header bg-white p-3">
+          <h3 class="text-center p-4">Greenband Web App</h3>
         </div>
-        <div class="card-body p-3">
-          <form method="POST" id="loginForm" enctype="multipart/form-data">
-            <div class="form-group my-4 my-md-3">
+        <div class="card-body p-4">
+          <form method="POST" id="loginForm" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="form-group my-4">
               <input type="email" class="form-control py-3" name="email" placeholder="Enter Email" />
+              <div class="invalid-feedback mt-2">Email is required</div>
             </div>
-            <div class="form-group my-4 my-md-3">
+            <div class="form-group my-4">
               <input type="password" class="form-control py-3" name="otp" placeholder="Enter OTP" />
+              <div class="invalid-feedback mt-2">OTP is required</div>
             </div>
             <button type="submit" class="btn btn-primary mt-1 mb-4 p-2 w-100">
               Log in

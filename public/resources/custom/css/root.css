@@ -1,0 +1,27 @@
+@font-face {
+    font-family: poppins-regular;
+    src: url(../../fonts/poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+    font-family: poppins-bold;
+    src: url(../../fonts/poppins/Poppins-Bold.ttf);
+}
+
+@font-face {
+    font-family: poppins-semi-bold;
+    src: url(../../fonts/poppins/Poppins-SemiBold.ttf);
+}
+
+
+:root {
+    --background-color: #e5e5e5;
+    --sub-heading-font-size: 22px;
+    --default-font-size: 16px;
+    --default-border-radius: 16px;
+    --font-family: poppins-regular;
+    --font-family-bold: poppins-bold;
+    --font-family-semi-bold: poppins-semi-bold;
+    --primary: #76009f;
+    --primary-opaque: #76009f40;
+}
