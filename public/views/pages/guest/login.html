@@ -10,14 +10,15 @@
 </head>
 
 <body>
-  <div id="loginFormContainer" class="container center-on-desktop-top-on-mobile">
+  <section id="loginFormContainer" class="container center-on-desktop-top-on-mobile">
     <div class="col-md-4 col-12">
       <div class="card shadow-sm">
-        <div class="card-header bg-white p-3">
+        <div class="card-header bg-white border-bottom-radius-0 p-3">
           <h3 class="text-center p-4">Greenband Web App</h3>
         </div>
         <div class="card-body p-4">
-          <form method="POST" id="loginForm" enctype="multipart/form-data" class="needs-validation" novalidate>
+          <form method="POST" id="loginForm" data-label="login" enctype="multipart/form-data" class="needs-validation"
+            novalidate>
             <div class="form-group my-4">
               <input type="email" class="form-control py-3" name="email" placeholder="Enter Email" />
               <div class="invalid-feedback mt-2">Email is required</div>
@@ -30,15 +31,15 @@
               Log in
             </button>
             <div class="mb-4">
-              <a href="#" class="text-underline text-secondary">Not registered</a>
+              <a href="/register" class="text-underline text-secondary">Not registered</a>
             </div>
           </form>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <script type="module" src="../../../resources/custom/js/login.js"></script>
+  <script type="module" src="../../../resources/custom/js/forms.js"></script>
 </body>
 
 </html>

@@ -24,7 +24,7 @@ const MaxRandom = 10000;
 
 /*
 `````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````` 
-FILE & FILE PATH CONATANTS
+FILE & FILE PATH CONSTANTS
 `````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````` 
 */
 
@@ -44,7 +44,10 @@ const StaticFilePath = Path.getFile(RootDir, 'public');
  */
 const FilePaths = {
     login: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'login.html'),
+    home: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'home.html'),
+    register: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'register.html'),
 }
+
 
 
 /*
@@ -69,6 +72,22 @@ const MimeTypes = {
 }
 
 
+const ValidationRules = {
+    'system-admin-login': {
+        email: {
+            required: true,
+            exists: 'system-admins'
+        }
+    }
+}
+
+
 module.exports = { MinRandom, MaxRandom, FilePaths, MimeTypes, StaticFilePath, RootDir };
 
 
+/**
+ * Workflow
+ * -> Create super admins section
+ * -> Allow super Admins to register system admins
+ * -> Allow system admins to login to the system
+ */

@@ -1,3 +1,5 @@
+
+
 class Utils {
     /**
      * Constructs a full URL by combining the current origin with the given path.
@@ -7,6 +9,10 @@ class Utils {
      */
     static getUrl(path) {
         return window.location.origin + path;
+    }
+
+    static getFormEndpoint(FormHandler, form) {
+        return FormHandler[form.getAttribute('id')];
     }
 }
 

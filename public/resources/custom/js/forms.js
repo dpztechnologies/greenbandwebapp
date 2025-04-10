@@ -1,7 +1,16 @@
 import Utils from "./utils.js";
 
 
-const form = document.getElementById("loginForm");
+/**
+ * Defines all forms and their endpoints
+ */
+const FormHandler = {
+    'registrationForm': '/process-registration',
+    'loginForm': '/process-login'
+}
+
+const form = document.querySelector("form");
+
 
 form.onsubmit = (e) => {
     e.preventDefault();
@@ -9,12 +18,15 @@ form.onsubmit = (e) => {
         method: 'POST',
         body: new FormData(form)
     }
-    postData(options)
+    postData(form, options)
 }
 
-async function postData(options) {
+
+
+
+async function postData(form, options) {
     try {
-        const endpoint = Utils.getUrl("/login");
+        const endpoint = Utils.getUrl(Utils.getFormEndpoint(FormHandler, form));
         const response = await fetch(endpoint, options);
         if (response.ok) {
             const data = await response.json();

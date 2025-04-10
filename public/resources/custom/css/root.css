@@ -13,15 +13,35 @@
     src: url(../../fonts/poppins/Poppins-SemiBold.ttf);
 }
 
+@font-face {
+    font-family: poppins-medium;
+    src: url(../../fonts/poppins/Poppins-Medium.ttf);
+}
+
 
 :root {
     --background-color: #e5e5e5;
+    --heading-font-size: 30px;
     --sub-heading-font-size: 22px;
     --default-font-size: 16px;
+    --medium-font-size: 18px;
+    --small-font-size: 12px;
     --default-border-radius: 16px;
     --font-family: poppins-regular;
     --font-family-bold: poppins-bold;
     --font-family-semi-bold: poppins-semi-bold;
+    --font-family-medium: poppins-medium;
     --primary: #76009f;
     --primary-opaque: #76009f40;
+    --primary-light: #F7F2FA;
+    --primary-overlay: #9840B7;
+    --primary-dark: #5e007d;
+    --success: #209F84;
+    --success-overlay: #58B7A3;
+    --success-dark: #1a806a;
+    --secondary: #7F7184;
+    --info: #2781D5;
+    --info-overlay: #5DA0DF;
+    --info-dark: #1c5c97;
+    --white: #ffffff;
 }

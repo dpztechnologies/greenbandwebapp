@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: greenbandwebapp
 -- ------------------------------------------------------
--- Server version        10.4.32-MariaDB
+-- Server version	10.4.32-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,13 +24,13 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `greenbandwebapp` /*!40100 DEFAULT CHAR
 USE `greenbandwebapp`;
 
 --
--- Table structure for table `system_admins`
+-- Table structure for table `admins`
 --
 
-DROP TABLE IF EXISTS `system_admins`;
+DROP TABLE IF EXISTS `admins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `system_admins` (
+CREATE TABLE `admins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(50) NOT NULL,
   `firstname` varchar(500) NOT NULL,
@@ -38,6 +38,7 @@ CREATE TABLE `system_admins` (
   `email` varchar(500) NOT NULL,
   `phone_no` varchar(500) NOT NULL,
   `password` varchar(500) NOT NULL,
+  `role` varchar(500) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `email` (`email`),
@@ -46,13 +47,13 @@ CREATE TABLE `system_admins` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `system_admins`
+-- Dumping data for table `admins`
 --
 
-LOCK TABLES `system_admins` WRITE;
-/*!40000 ALTER TABLE `system_admins` DISABLE KEYS */;
-INSERT INTO `system_admins` VALUES (1,1630,'Peter','Mwambi','calebmwambi@gmail.com','0114958431','41512258'),(2,6125,'John','Kiragu','jkiragu001@gmail.com','0722137451','79168441');
-/*!40000 ALTER TABLE `system_admins` ENABLE KEYS */;
+LOCK TABLES `admins` WRITE;
+/*!40000 ALTER TABLE `admins` DISABLE KEYS */;
+INSERT INTO `admins` VALUES (1,1630,'Peter','Mwambi','calebmwambi@gmail.com','0114958431','41512258',''),(2,6125,'John','Kiragu','jkiragu001@gmail.com','0722137451','79168441','');
+/*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -64,4 +65,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-02 10:54:15
+-- Dump completed on 2025-04-10 16:48:31
