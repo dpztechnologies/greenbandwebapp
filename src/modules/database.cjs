@@ -185,6 +185,33 @@ class Database {
     }
 
     /**
+    * Count the number of records in a table.
+    * @param {string} table - The table to count records in.
+    * @param {Array} [where=[]] - Optional WHERE condition in the form [column, operator, value].
+    * @returns {Promise<number>} The count result as a number.
+    */
+    async count(table, where = []) {
+        try {
+            let sql = `SELECT COUNT(*) AS count FROM ${table}`;
+            const params = [];
+
+            if (where.length === 3) {
+                const [col, op, val] = where;
+                sql += ` WHERE ${col} ${op} ?`;
+                params.push(val);
+            }
+
+            await this.query(sql, params);
+            const result = this.getResults();
+            return result[0]?.count || 0;
+        } catch (err) {
+            console.error("Count Error:", err.message);
+            throw err;
+        }
+    }
+
+
+    /**
      * Static method to get the singleton instance of the Database class.
      * If no instance exists, it creates one.
      * @returns {Database} The singleton instance of the Database class.

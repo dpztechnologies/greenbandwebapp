@@ -5,8 +5,8 @@ import Utils from "./utils.js";
  * Defines all forms and their endpoints
  */
 const FormHandler = {
-    'registrationForm': '/process-registration',
-    'loginForm': '/process-login'
+    'admin-registration': '/process-registration',
+    'admin-login': '/process-login'
 }
 
 const form = document.querySelector("form");
@@ -14,9 +14,11 @@ const form = document.querySelector("form");
 
 form.onsubmit = (e) => {
     e.preventDefault();
+    let formData = new FormData(form);
+    formData.append('form', Utils.getFormId(form));
     const options = {
         method: 'POST',
-        body: new FormData(form)
+        body: formData
     }
     postData(form, options)
 }
@@ -32,11 +34,8 @@ async function postData(form, options) {
             const data = await response.json();
             console.log(data);
         } else {
-            let error = JSON.parse(await response.text())
-            let errorInput = document.querySelector(`input[name="${error.handler}"]`);
-            errorInput.classList.add("is-invalid");
-            let errorHandler = errorInput.nextElementSibling;
-            errorHandler.innerHTML = error.message;
+            let error = JSON.parse(await response.text());
+            return Utils.handleFormErrors(error);
         }
     } catch (err) {
         console.error(err.message);

@@ -1,0 +1,120 @@
+const { ValidationRules } = require('../config/validation.cjs');
+
+const DB = require('../modules/database.cjs');
+
+
+class Validator {
+
+    errors = [];
+
+    pass = false;
+
+    constructor(form, data) {
+        this.form = form;
+        this.data = data;
+    }
+
+    getRules() {
+        try {
+            if (ValidationRules.hasOwnProperty(this.form)) {
+                return ValidationRules[this.form]
+            }
+            throw new Error(`${this.form} does not exist in rules`);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async validate() {
+        for (let field in this.getRules()) {
+            for (let rule in this.getRules()[field]) {
+                switch (rule) {
+                    case 'required':
+                        this.#handleRequired(this.data[field], field, this.getRules()[field][rule])
+                        break;
+                    case 'min':
+                        this.#handleMin(this.data[field], field, this.getRules()[field][rule]);
+                        break;
+                    case 'min':
+                        this.#handleMax(this.data[field], field, this.getRules()[field][rule]);
+                        break;
+                    case 'pattern':
+                        this.#handlePattern(this.data[field], field, this.getRules()[field][rule]);
+                        break;
+                    case 'unique':
+                        await this.#handleUnique(this.data[field], field, this.getRules()[field][rule])
+                        break;
+                }
+                if (rule === 'required' && !this.data[field]) break;
+            }
+        }
+        return this;
+    }
+
+    #handleRequired(data, field, rule) {
+        if (!data && rule) {
+            this.errors.push({ message: `${field} is required`, handler: `${field}` })
+        }
+        return false;
+    }
+
+    #handleMin(data, field, rule) {
+        if (data.length < rule) {
+            this.errors.push({ message: `${field} cannot be less than ${rule}`, handler: `${field}` })
+        }
+        return false;
+    }
+
+    #handleMax(data, field, rule) {
+        if (data.length > rule) {
+            this.errors.push({ message: `${field} cannot be greater than ${rule}`, handler: `${field}` })
+        }
+        return false;
+    }
+
+    #handlePattern(data, field, rule) {
+        if (!rule.test(data)) {
+            this.errors.push({ message: `${field} contains invalid characters`, handler: `${field}` })
+        }
+        return false;
+    }
+
+    async #handleUnique(data, field, rule) {
+        const [table, column, exists] = rule.split('|');
+        const count = await DB.use().count(table, [column, '=', data]);
+        switch (exists) {
+            case 'true':
+                if (count <= 0) {
+                    this.errors.push({ message: `${field} was not found`, handler: `${field}` })
+                    return false;
+                }
+                break;
+            case 'false':
+                if (count > 0) {
+                    this.errors.push({ message: `${field} already exists`, handler: `${field}` })
+                    return false;
+                }
+                break
+        }
+        return false;
+    }
+
+
+    passed() {
+        if (this.errors.length === 0) {
+            this.pass = true;
+        }
+        return this.pass;
+    }
+
+    getErrors() {
+        return this.errors;
+    }
+}
+
+
+async function validate(form, data) {
+    return await new Validator(form, data).validate();
+}
+
+module.exports = { validate }

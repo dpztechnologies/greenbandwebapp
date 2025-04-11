@@ -11,9 +11,30 @@ class Utils {
         return window.location.origin + path;
     }
 
-    static getFormEndpoint(FormHandler, form) {
-        return FormHandler[form.getAttribute('id')];
+    static getFormId(form) {
+        return form.getAttribute('id');
     }
+
+    static getFormEndpoint(FormHandler, form) {
+        return FormHandler[Utils.getFormId(form)];
+    }
+
+    static handleFormErrors(errorResponse, selector = 'input') {
+        console.log(errorResponse);
+        if (errorResponse.errors && Array.isArray(errorResponse.errors)) {
+            errorResponse.errors.forEach(({ handler, message }) => {
+                const input = document.querySelector(`${selector}[name="${handler}"]`);
+                if (input) {
+                    input.classList.add("is-invalid");
+                    const errorMessageElement = input.nextElementSibling;
+                    if (errorMessageElement) {
+                        errorMessageElement.innerHTML = message;
+                    }
+                }
+            });
+        }
+    }
+
 }
 
 export default Utils;

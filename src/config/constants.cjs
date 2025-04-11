@@ -72,22 +72,5 @@ const MimeTypes = {
 }
 
 
-const ValidationRules = {
-    'system-admin-login': {
-        email: {
-            required: true,
-            exists: 'system-admins'
-        }
-    }
-}
-
-
 module.exports = { MinRandom, MaxRandom, FilePaths, MimeTypes, StaticFilePath, RootDir };
 
-
-/**
- * Workflow
- * -> Create super admins section
- * -> Allow super Admins to register system admins
- * -> Allow system admins to login to the system
- */

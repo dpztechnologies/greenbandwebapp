@@ -2,6 +2,7 @@ const { routeProvider } = require("./modules/routes.cjs");
 const fs = require("fs");
 const utilities = require("./modules/utilities.cjs");
 const DB = require("./modules/database.cjs");
+const { validate } = require('./modules/validator.cjs');
 
 const app = routeProvider();
 
@@ -71,7 +72,7 @@ app.post("/process-login", [validateLogin], (req, res) => {
     console.log(email);
 })
 
-app.post("/process-registration", [], (req, res) => {
+app.post("/process-registration", [validateAdminRegistration], (req, res) => {
     if (!req.body) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Missing request body' }));
@@ -81,6 +82,19 @@ app.post("/process-registration", [], (req, res) => {
 
     console.log(email);
 })
+
+
+async function validateAdminRegistration(req, res, next) {
+    let validation = await validate(req.body.form, req.body);
+    if (!validation.passed()) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({
+            errors: validation.getErrors()
+        }));
+    }
+    next();
+}
+
 
 
 
