@@ -1,0 +1,149 @@
+@import url(root.css);
+
+body {
+    background-color: var(--background-color);
+    font-family: var(--font-family);
+    font-size: var(--default-font-size) !important;
+}
+
+h1 {
+    font-size: var(--heading-font-size);
+    font-family: var(--font-family-semi-bold);
+}
+
+h3 {
+    font-size: var(--sub-heading-font-size);
+    font-family: var(--font-family-semi-bold);
+}
+
+input,
+select,
+option {
+    font-size: var(--default-font-size) !important;
+    font-family: var(--font-family) !important;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 0.25rem var(--primary-opaque) !important;
+}
+
+.text-medium {
+    font-size: var(--medium-font-size);
+    font-family: var(--font-family-medium);
+}
+
+.text-small {
+    font-size: var(--small-font-size);
+}
+
+.text-secondary {
+    color: var(--secondary) !important;
+}
+
+.center-on-desktop-top-on-mobile {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 3rem;
+    /* top spacing for mobile */
+}
+
+/* Light */
+
+.bg-light {
+    background-color: var(--primary-light) !important;
+}
+
+.btn-primary,
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+
+/* Primary */
+
+.btn-primary {
+    border-color: var(--primary) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.bg-primary-overlay {
+    background-color: var(--primary-overlay) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+/* Info */
+
+.bg-info,
+.btn-info {
+    background-color: var(--info) !important;
+}
+
+.btn-info {
+    border-color: var(--info) !important;
+    color: var(--white) !important;
+}
+
+.btn-info:hover {
+    background-color: var(--info-dark) !important;
+    border-color: var(--info-dark) !important;
+}
+
+.bg-info-overlay {
+    background-color: var(--info-overlay) !important;
+}
+
+
+/* Success */
+
+.bg-success,
+.btn-success {
+    background-color: var(--success) !important;
+}
+
+.bg-success-overlay {
+    background-color: var(--success-overlay) !important;
+}
+
+.btn-success {
+    border-color: var(--success) !important;
+}
+
+.btn-success:hover {
+    background-color: var(--success-dark) !important;
+    border-color: var(--success-dark) !important;
+}
+
+
+
+
+
+
+
+.card,
+.card-header {
+    border-radius: var(--default-border-radius) !important;
+}
+
+.border-bottom-radius-0 {
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+}
+
+
+@media (min-width: 768px) {
+    .center-on-desktop-top-on-mobile {
+        align-items: center;
+        padding-top: 0rem;
+        /* remove top spacing on desktop */
+    }
+}

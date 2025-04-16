@@ -1,0 +1,1 @@
+mariadbd --datadir=$PREFIX/var/lib/mysql &
