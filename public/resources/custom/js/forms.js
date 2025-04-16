@@ -20,24 +20,26 @@ form.onsubmit = (e) => {
         method: 'POST',
         body: formData
     }
-    postData(form, options)
+    postData(form, options, Utils.successHandlerV1);
 }
 
 
 
 
-async function postData(form, options) {
+
+async function postData(form, options, successHandler) {
     try {
         const endpoint = Utils.getUrl(Utils.getFormEndpoint(FormHandler, form));
         const response = await fetch(endpoint, options);
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
+            successHandler(data, form)
         } else {
             let error = JSON.parse(await response.text());
             return Utils.handleFormErrors(error);
         }
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
     }
 }
+

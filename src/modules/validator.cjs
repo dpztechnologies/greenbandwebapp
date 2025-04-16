@@ -42,7 +42,10 @@ class Validator {
                         this.#handlePattern(this.data[field], field, this.getRules()[field][rule]);
                         break;
                     case 'unique':
-                        await this.#handleUnique(this.data[field], field, this.getRules()[field][rule])
+                        await this.#handleUnique(this.data[field], field, this.getRules()[field][rule]);
+                        break;
+                    case 'values':
+                        this.#handleValues(this.data[field], field, this.getRules()[field][rule]);
                         break;
                 }
                 if (rule === 'required' && !this.data[field]) break;
@@ -79,9 +82,16 @@ class Validator {
         return false;
     }
 
+    #handleValues(data, field, rule) {
+        if (!rule.includes(data)) {
+            this.errors.push({ message: `${field} is invalid`, handler: `${field}` })
+        }
+        return false;
+    }
+
     async #handleUnique(data, field, rule) {
         const [table, column, exists] = rule.split('|');
-        const count = await DB.use().count(table, [column, '=', data]);
+        const count = await DB.run().count(table, [column, '=', data]);
         switch (exists) {
             case 'true':
                 if (count <= 0) {

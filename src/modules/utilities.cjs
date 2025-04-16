@@ -46,6 +46,75 @@ class Utilities {
     static getFilePath(filename) {
         return (Object.keys(FilePaths).includes(filename)) ? FilePaths[filename] : console.error(`Invalid filename: ${filename}`)
     }
+
+    /**
+    * Recursively replaces patterns in object keys based on search and replace arrays.
+    * Handles nested objects and arrays.
+    * @param {object|array} object - The object or array to process
+    * @param {Array<RegExp>} search - Array of RegExp patterns to search for in keys
+    * @param {Array<string>} replace - Array of replacement strings corresponding to the search patterns
+    * @returns {object|array} A new object or array with replaced keys
+    * @throws Will throw an error if search and replace are not arrays or have different lengths
+    */
+    static replaceObjectKeysPattern(object, search = [], replace = []) {
+        if (!Array.isArray(search) || !Array.isArray(replace)) {
+            throw new Error('Search & Replace must be of type Array');
+        }
+
+        if (search.length !== replace.length) {
+            throw new Error('Search and replace items must be of the same length');
+        }
+
+        const replaceKeys = (key) => {
+            let newKey = key;
+            for (let x = 0; x < search.length; x++) {
+                newKey = newKey.replace(search[x], replace[x]);
+            }
+            return newKey;
+        }
+
+        if (Array.isArray(object)) {
+            return object.map(item => Utilities.replaceObjectKeysPattern(item, search, replace));
+        }
+
+        if (object !== null && typeof object === 'object') {
+            const newObject = {};
+            for (const key in object) {
+                if (Object.hasOwnProperty.call(object, key)) {
+                    const newKey = replaceKeys(key);
+                    newObject[newKey] = Utilities.replaceObjectKeysPattern(object[key], search, replace);
+                }
+            }
+            return newObject;
+        }
+
+        return object;
+    }
+
+    /**
+     * Replaces object keys based on a key mapping.
+     * @param {object} object - The original object
+     * @param {object} keyMap - A mapping of old keys to new keys
+     * @returns {object} A new object with keys replaced based on the key map
+     * @throws Will throw an error if object or keyMap is not an object
+     */
+    static replaceObjectKeys(object, keyMap = {}) {
+        if (typeof object !== 'object' || typeof keyMap !== 'object') {
+            throw new Error('object and keyMap must be of type object');
+        }
+
+        const newObject = {};
+
+        for (let key in object) {
+            if (Object.hasOwnProperty.call(object, key)) {
+                const newKey = keyMap[key] || key;
+                newObject[newKey] = object[key];
+            }
+        }
+
+        return newObject;
+    }
+
 }
 
 

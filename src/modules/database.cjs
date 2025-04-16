@@ -216,7 +216,7 @@ class Database {
      * If no instance exists, it creates one.
      * @returns {Database} The singleton instance of the Database class.
      */
-    static use() {
+    static run() {
         if (!this.instance) {
             this.instance = new this();
         }

@@ -43,7 +43,7 @@ CREATE TABLE `admins` (
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone_no` (`phone_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +52,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES (1,1630,'Peter','Mwambi','calebmwambi@gmail.com','0114958431','41512258',''),(2,6125,'John','Kiragu','jkiragu001@gmail.com','0722137451','79168441','');
+INSERT INTO `admins` VALUES (17,10205,'Peter','Mwambi','calebmwambi@gmail.com','0700521998','$2b$12$NJRmBTJjyiiqz5RuNlFKoOs7DV9AFchI9dnrs.ZeYOO8PJemYsR1G','Super Admin'),(18,5837,'Susan','Njeri','sue@gmail.com','0114958431','$2b$12$3XYF44nY3WGoQtp.zzhGCelrKBydvgY5xt.DbnVGxw/vNrx1dH1uK','System Admin'),(19,7974,'Joyce','Wangari','joyce@gmail.com','0723117035','$2b$12$jjQe3aCz0ivWU9Uc7jOcUel52VCmzw/t1iwQAU4OyqH5md.EL4Kuq','System Admin'),(20,6678,'Anthony','Njenga','anthony.njenga@gmail.com','07117231221','$2b$12$hlez3y6Ze9vx7CQBW73SJeLdppwQVHQ8d4ANBIlEbb1.1cLnVlCHW','Super Admin'),(21,2456,'Anthony','Kamau','anthony.kamau@gmail.com','0113277585','$2b$12$vJwP7GQ1U6ytTbjr6eve1egi19mBq3CS3wXluVDzIlBcIoyd4a6GG','System Admin'),(22,7466,'Nancy','Mueni','mueni.nancy@gmail.com','0721227121','$2b$12$YRc.MLw5c6FvECUb7okoCOsDMNExjGq6NUO7vhmuqjoD/ckAWMIj.','System Admin'),(23,4816,'Nicholas','Amani','nicholas.amani@gmail.com','0711221377','$2b$12$naMq6n7CqH341udOxzI58e0QOsR2xODUG3xOQe0njGmd72pggInde','System Admin');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -65,4 +65,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-10 16:48:31
+-- Dump completed on 2025-04-16 18:10:30

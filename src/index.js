@@ -1,8 +1,9 @@
 const { routeProvider } = require("./modules/routes.cjs");
 const fs = require("fs");
 const utilities = require("./modules/utilities.cjs");
-const DB = require("./modules/database.cjs");
-const { validate } = require('./modules/validator.cjs');
+const { Validator } = require('./middlewares/validate.cjs');
+const { Sanitizer } = require('./middlewares/sanitize.cjs');
+const { Register } = require("./controllers/registration.cjs");
 
 const app = routeProvider();
 
@@ -72,28 +73,30 @@ app.post("/process-login", [validateLogin], (req, res) => {
     console.log(email);
 })
 
-app.post("/process-registration", [validateAdminRegistration], (req, res) => {
-    if (!req.body) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Missing request body' }));
-        return;
-    }
-    const { email, otp } = req.body;
+app.post("/process-registration",
+    [
+        Sanitizer.sanitizeData,
+        Validator.validateAdminRegistration
+    ],
+    async (req, res) => {
+        if (!req.body) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Missing request body' }));
+            return;
+        }
+        const response = await Register.admin(req.body);
+        if (response.success) {
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(response));
+            return;
+        } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(response));
+            return;
+        }
+    })
 
-    console.log(email);
-})
 
-
-async function validateAdminRegistration(req, res, next) {
-    let validation = await validate(req.body.form, req.body);
-    if (!validation.passed()) {
-        res.writeHead(400, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({
-            errors: validation.getErrors()
-        }));
-    }
-    next();
-}
 
 
 
