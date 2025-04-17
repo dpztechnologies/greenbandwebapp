@@ -1,5 +1,5 @@
 const DB = require("../modules/database.cjs");
-const { Hashing } = require("../modules/hashing.cjs");
+const Hashing = require("../modules/hashing.cjs");
 const Utilities = require("../modules/utilities.cjs");
 
 class Registration {
@@ -19,7 +19,6 @@ class Registration {
         } catch (err) {
             return { success: false, message: 'Something unexpected happened', error: err.message }
         }
-
     }
 }
 

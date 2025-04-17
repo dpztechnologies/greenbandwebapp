@@ -10,6 +10,16 @@
 </head>
 
 <body>
+
+  <div id="toast-wrapper" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    <div id="alert-toast" class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true"
+      data-bs-delay="3000" data-bs-autohide="true">
+      <div class="toast-body text-center p-3">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div>
+
   <section id="loginFormContainer" class="container center-on-desktop-top-on-mobile">
     <div class="col-md-4 col-12">
       <div class="card shadow-sm">
@@ -24,11 +34,12 @@
               <div class="invalid-feedback mt-2">Email is required</div>
             </div>
             <div class="form-group my-4">
-              <input type="password" class="form-control py-3" name="otp" placeholder="Enter OTP" />
+              <input type="password" class="form-control py-3" name="password" placeholder="Enter OTP" />
               <div class="invalid-feedback mt-2">OTP is required</div>
             </div>
             <button type="submit" class="btn btn-primary mt-1 mb-4 p-2 w-100">
-              Log in
+              <span class="spinner spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+              <span class="button-text">Login</span>
             </button>
             <div class="mb-4">
               <a href="/register" class="text-underline text-secondary">Not registered</a>

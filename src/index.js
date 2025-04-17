@@ -62,52 +62,35 @@ app.get("/register", [], (req, res) => {
  */
 
 
-app.post("/process-login", [validateLogin], (req, res) => {
+app.post("/process-login", [Sanitizer.sanitize, Validator.validate], (req, res) => {
     if (!req.body) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Missing request body' }));
         return;
     }
-    const { email, otp } = req.body;
-
-    console.log(email);
 })
 
-app.post("/process-registration",
-    [
-        Sanitizer.sanitizeData,
-        Validator.validateAdminRegistration
-    ],
-    async (req, res) => {
-        if (!req.body) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Missing request body' }));
-            return;
-        }
-        const response = await Register.admin(req.body);
-        if (response.success) {
-            res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(response));
-            return;
-        } else {
-            res.writeHead(400, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(response));
-            return;
-        }
-    })
-
-
-
-
-
-
-function validateLogin(req, res, next) {
-    if (!req.body.email) {
-        res.writeHead(400, { 'Content-Type': 'application/json' })
-        return res.end(JSON.stringify({ message: 'Email is required', handler: 'email' }));
+app.post("/process-registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
+    if (!req.body) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Missing request body' }));
+        return;
     }
-    next();
-}
+    const response = await Register.admin(req.body);
+    if (response.success) {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(response));
+        return;
+    } else {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(response));
+        return;
+    }
+})
+
+
+
+
 
 
 /**

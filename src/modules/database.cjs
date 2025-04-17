@@ -22,11 +22,8 @@ class Database {
     /*** Array to hold query parameters. ***/
     #params = [];
 
-    /*** Holds field names from the query result. ***/
-    #fields;
+    static #instance
 
-    /*** Singleton instance for ensuring a single database connection. ***/
-    static instance = "";
 
 
     /**
@@ -54,19 +51,11 @@ class Database {
     }
 
     /**
-     * Private method to set query fields.
-     * @param {Array} fields - The fields of the SQL query.
-     */
-    #setFields(fields) {
-        this.#fields = fields;
-    }
-
-    /**
      * Public method to get the query results.
      * @returns {Array} The results of the executed SQL query.
      */
     getResults() {
-        return this.#result;
+        return JSON.parse(JSON.stringify(this.#result));
     }
 
     /**
@@ -75,7 +64,7 @@ class Database {
      * @param {Array} [params=[]] - The parameters to use in the query.
      * @returns {Promise} A promise that resolves with the current instance after the query completes.
      */
-    async query(sql, params = []) {
+    async query(sql = this.#sql, params = this.#params) {
         return new Promise((resolve, reject) => {
             this.#conn.query(sql, params, (err, results, fields) => {
                 if (err) {
@@ -83,7 +72,6 @@ class Database {
                     return;
                 }
                 this.#setResults(results);
-                this.#setFields(fields);
                 resolve(this);
             });
         });
@@ -107,6 +95,19 @@ class Database {
         }
         return this;
     }
+
+    /**
+    * Method to start a DELETE query.
+    * Initializes the SQL query with the DELETE keyword.
+    * To complete the query, use chaining with from(), where(), etc.
+    *
+    * @returns {Database} The current instance for chaining.
+    */
+    delete() {
+        this.#sql = `DELETE`;
+        return this;
+    }
+
 
     /**
      * Method to start an INSERT query.
@@ -154,35 +155,61 @@ class Database {
      * @param {boolean} [exec=false] - Whether to execute the query immediately.
      * @returns {Database} The current instance for chaining.
      */
-    async from(table, exec = false) {
+    from(table) {
         this.#sql += ` FROM ${table}`;
-        if (exec) {
-            await this.query(this.#sql, this.#params);
-        }
         return this;
     }
 
     /**
-     * Asynchronous method to add WHERE conditions to the SQL query.
-     * @param {Array} where - The WHERE condition with column, operator, and value.
-     * @returns {Database} The current instance for chaining.
-     * @throws {Error} Throws error if WHERE conditions don't have exactly 3 elements.
+     * Asynchronous method to add a WHERE clause to the SQL query.
+     * Delegates processing to a private helper.
+     *
+     * @param {Array} where - An array with exactly 3 elements: [column, operator, value].
+     * @param {boolean} [exec=false] - Whether to execute the query immediately.
+     * @returns {Promise<Database>} The current instance for chaining.
+     * @throws {Error} Throws an error if the input array doesn't have exactly 3 elements.
+    */
+    where(where = []) {
+        return this.#primitives('WHERE', where);
+    }
+
+    /**
+     * Asynchronous method to append an AND condition to an existing WHERE clause.
+     * Delegates processing to a private helper.
+     *
+     * @param {Array} and - An array with exactly 3 elements: [column, operator, value].
+     * @param {boolean} [exec=false] - Whether to execute the query immediately.
+     * @returns {Promise<Database>} The current instance for chaining.
+     * @throws {Error} Throws an error if the input array doesn't have exactly 3 elements.
      */
-    async where(where = []) {
+    and(and = []) {
+        return this.#primitives('AND', and);
+    }
+
+    /**
+     * Private helper to process conditional SQL primitives (e.g., WHERE, AND).
+     *
+     * @param {string} alias - The SQL keyword to use (e.g., "WHERE", "AND").
+     * @param {Array} primitive - An array containing [column, operator, value].
+     * @param {boolean} exec - Whether to execute the query immediately.
+     * @returns {Promise<Database>} The current instance for chaining.
+     * @throws {Error} If the input array doesn't have exactly 3 elements.
+     */
+    #primitives(alias, primitive = []) {
         try {
-            if (where.length === 3) {
-                const [col, op, val] = where;
-                this.#sql += ` WHERE ${col} ${op} ?`;
+            if (primitive.length === 3) {
+                const [col, op, val] = primitive;
+                this.#sql += ` ${alias} ${col} ${op} ?`;
                 this.#params.push(val);
-                await this.query(this.#sql, this.#params);
                 return this;
             } else {
-                throw new Error("Warning: Where params must have exactly 3 elements"); // Error if invalid parameters.
+                throw new Error("Warning: Where params must have exactly 3 elements");
             }
         } catch (err) {
             console.error(err);
         }
     }
+
 
     /**
     * Count the number of records in a table.
@@ -200,7 +227,6 @@ class Database {
                 sql += ` WHERE ${col} ${op} ?`;
                 params.push(val);
             }
-
             await this.query(sql, params);
             const result = this.getResults();
             return result[0]?.count || 0;
@@ -208,6 +234,11 @@ class Database {
             console.error("Count Error:", err.message);
             throw err;
         }
+    }
+
+
+    getSql() {
+        return { sql: this.#sql, params: this.#params };
     }
 
 

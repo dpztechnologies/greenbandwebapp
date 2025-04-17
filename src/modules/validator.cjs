@@ -2,6 +2,8 @@ const { ValidationRules } = require('../config/validation.cjs');
 
 const DB = require('../modules/database.cjs');
 
+const Hashing = require('../modules/hashing.cjs');
+
 
 class Validator {
 
@@ -43,6 +45,9 @@ class Validator {
                         break;
                     case 'unique':
                         await this.#handleUnique(this.data[field], field, this.getRules()[field][rule]);
+                        break;
+                    case 'verified_by':
+                        await this.#handleVerifiedBy(this.data, field, this.getRules()[field][rule]);
                         break;
                     case 'values':
                         this.#handleValues(this.data[field], field, this.getRules()[field][rule]);
@@ -105,6 +110,26 @@ class Validator {
                     return false;
                 }
                 break
+        }
+        return false;
+    }
+
+    async #handleVerifiedBy(data, field, rules) {
+        const [ref, refTable, refColumn] = rules.split('|');
+        if (data[ref].length <= 0) {
+            this.errors.push({ message: `You must provide an ${ref}`, handler: `${field}` })
+            return false;
+        }
+        let storedPassword = (await DB.run().select(['password']).from(refTable).where([refColumn, '=', data[ref]]).query());
+        storedPassword = storedPassword.getResults();
+        if (storedPassword.length <= 0) {
+            this.errors.push({ message: `${field} is invalid`, handler: `${field}` })
+            return false;
+        }
+        const verify = await Hashing.verifyPassword(data[field], storedPassword[0].password);
+        if (!verify) {
+            this.errors.push({ message: `Wrong ${field}`, handler: `${field}` })
+            return false;
         }
         return false;
     }

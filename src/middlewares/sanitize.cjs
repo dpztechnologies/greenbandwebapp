@@ -35,7 +35,7 @@ class SanitizeMiddleware {
         return input;
     }
 
-    static sanitizeData(req, res, next) {
+    static sanitize(req, res, next) {
         if (req.body) {
             req.body = SanitizeMiddleware.#sanitizeEngine(req.body);
         }

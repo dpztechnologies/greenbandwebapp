@@ -11,8 +11,14 @@ const ValidationRules = {
     'admin-login': {
         email: {
             required: true,
-            exists: 'system-admins'
+            pattern: RegEx['email'],
+            unique: 'admins|email|true',
         },
+        password: {
+            required: true,
+            pattern: RegEx['strings-with-special-chars-no-space'],
+            verified_by: 'email|admins|email'
+        }
     },
     'admin-registration': {
         firstname: {

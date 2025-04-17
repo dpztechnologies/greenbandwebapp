@@ -28,13 +28,11 @@ class Hashing {
      * @returns {Promise<boolean>} - true if password matxhes otherwise false
      */
     static async verifyPassword(plainPassword, hashedPassword) {
-        if (typeof plainPassword !== 'string' || typeof hashedPassword === 'string') {
+        if (typeof plainPassword !== 'string' || typeof hashedPassword !== 'string') {
             throw new Error('Hashed password and Plain password must be strings')
         }
         return await bcrypt.compare(plainPassword, hashedPassword);
     }
 }
 
-module.exports = {
-    Hashing
-}
+module.exports = Hashing
