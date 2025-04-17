@@ -1,5 +1,8 @@
-
-
+/**
+ * @author DPZTechnologies
+ * @date Thu Apr 03 2025 15:17:25 GMT+0300 (East Africa Time)
+ * @abstract Frontend Utilities
+ */
 class Utils {
     /**
      * Constructs a full URL by combining the current origin with the given path.
@@ -11,14 +14,34 @@ class Utils {
         return window.location.origin + path;
     }
 
+    /**
+     * Retrieves the ID attribute of a given form element.
+     * 
+     * @param {HTMLFormElement} form - The form element to extract the ID from.
+     * @returns {string|null} - The ID of the form or null if not found.
+     */
     static getFormId(form) {
         return form.getAttribute('id');
     }
 
+    /**
+     * Resolves the endpoint for a form using a form-handler mapping.
+     * 
+     * @param {Object} FormHandler - Object mapping form IDs to endpoints.
+     * @param {HTMLFormElement} form - The form whose endpoint is to be resolved.
+     * @returns {string} - The endpoint associated with the form ID.
+     */
     static getFormEndpoint(FormHandler, form) {
         return FormHandler[Utils.getFormId(form)];
     }
 
+    /**
+     * Handles form field errors and applies visual feedback.
+     * 
+     * @param {Object} errorResponse - The error response containing validation errors.
+     * @param {string[]} selectors - A list of selectors to target input fields.
+     * @returns {void}
+     */
     static handleFormErrors(errorResponse, selectors = ['input', 'select']) {
         const errorFields = new Set();
 
@@ -38,8 +61,6 @@ class Utils {
             });
         }
 
-
-
         selectors.forEach(selector => {
             const allFields = document.querySelectorAll(selector);
             allFields.forEach(field => {
@@ -58,12 +79,26 @@ class Utils {
         });
     }
 
-
+    /**
+     * Converts the first letter of a string to uppercase.
+     * 
+     * @param {string} string - The input string to capitalize.
+     * @returns {string} - The capitalized string.
+     */
     static ucfirst(string) {
         string = String(string || '');
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    /**
+     * Displays a toast message with dynamic content and styling.
+     * 
+     * @param {string} selector - The selector for the toast element.
+     * @param {string} message - The message to display inside the toast.
+     * @param {string} color - The class name for styling (e.g., 'bg-success').
+     * @param {Function} ev - Callback function to invoke after the toast is hidden.
+     * @returns {void}
+     */
     static displayToastMessage(selector, message, color, ev) {
         try {
             const toast = document.querySelector(selector);
@@ -82,6 +117,12 @@ class Utils {
         }
     }
 
+    /**
+     * Resets validation classes and feedback messages for form elements.
+     * 
+     * @param {string[]} selectors - Array of CSS selectors to apply the reset to.
+     * @returns {void}
+     */
     static resetPlaceholders(selectors = ['input', 'select']) {
         const validityClasses = ['is-invalid', 'is-valid']
         selectors.forEach(selector => {
@@ -101,13 +142,138 @@ class Utils {
         })
     }
 
-    static successHandlerV1(data, form) {
+    /**
+     * Displays a toast message and resets the form on success.
+     * 
+     * @param {Object} data - The success response containing the message.
+     * @param {HTMLFormElement} form - The form to reset.
+     * @param {Function} callback - The callback to execute after completion.
+     * @returns {void}
+     */
+    static successHandlerV1(data, form, callback) {
         Utils.displayToastMessage('.toast', data.message, 'bg-success', () => {
             form.reset();
             Utils.resetPlaceholders();
+            callback();
         })
+        return;
     }
 
+    /**
+     * Enables or disables a DOM element based on the given flag.
+     * 
+     * @param {string} selector - CSS selector for the target element.
+     * @param {boolean} disable - Whether to disable (true) or enable (false) the element.
+     * @returns {void}
+     */
+    static disableElement(selector, disable = false) {
+        const element = document.querySelector(selector);
+        if (!element) throw new Error(`Invalid selector ${selector}`)
+        if (disable) {
+            element.setAttribute('disabled', true);
+        } else {
+            if (element.hasAttribute('disabled')) {
+                element.removeAttribute('disabled');
+            }
+        }
+        return;
+    }
+
+    /**
+     * Sets the innerHTML of the selected element if data is not empty.
+     * 
+     * @param {string} selector - The selector of the element to update.
+     * @param {string} data - The HTML string to inject.
+     * @returns {boolean|string} - False if data is empty, otherwise the updated HTML.
+     */
+    static writeInnerHTML(selector, data = "") {
+        const element = document.querySelector(selector);
+        return (element && data.length > 0) ? element.innerHTML = data : false;
+    }
+
+    /**
+     * Applies the specified class list action ('add', 'remove', or 'toggle') to a single DOM element.
+     * 
+     * @param {string} action - The action to perform on the class list.
+     * @param {string[]} classNames - Array of class names to manipulate.
+     * @param {string} selector - The CSS selector of the target element.
+     * @returns {void}
+     */
+    static classListActions(action = 'add', classNames = [], selector) {
+        const element = document.querySelector(selector);
+        if (!element) return;
+        classNames.forEach(className => {
+            switch (action) {
+                case 'add':
+                    (!element.classList.contains(className)) && element.classList.add(className)
+                    break;
+                case 'remove':
+                    (element.classList.contains(className)) && element.classList.remove(className);
+                    break;
+                case 'toggle':
+                    element.classList.toggle(className);
+                    break;
+            }
+        })
+        return;
+    }
+
+    /**
+     * Manages the display of a button loading animation and disables/enables the button.
+     * 
+     * @param {boolean} display - Whether to show or hide the loading animation.
+     * @param {Object} props - The properties for managing the button.
+     * @param {string} props.selector - The button container selector.
+     * @param {boolean} props.disabled - Whether to disable the button.
+     * @param {string} props.text - The text to display in the button.
+     * @returns {void}
+     */
+    static displayButtonAnimation(display = false, props = { selector: "", disabled: false, text: '' }) {
+        Utils.#handleButtonAnimationErrors(props)
+        switch (display) {
+            case true:
+                return this.#buttonAnimationActions('remove', props);
+            case false:
+                return this.#buttonAnimationActions('add', props);
+        }
+    }
+
+    /**
+     * Executes class and content updates for a button animation state.
+     * 
+     * @param {string} action - 'add' or 'remove' to manage the loading spinner.
+     * @param {Object} props - Button control properties.
+     * @returns {void}
+     */
+    static #buttonAnimationActions(action, props) {
+        Utils.classListActions(action, ['d-none'], `${props.selector} .spinner`);
+        Utils.disableElement(props.selector, props.disabled);
+        Utils.writeInnerHTML(`${props.selector} button-text`, props.text);
+        return;
+    }
+
+    /**
+     * Validates the shape and values of props for the button animation feature.
+     * 
+     * @param {Object} props - The props object to validate.
+     * @throws {Error} - If props are invalid or contain unexpected properties.
+     * @returns {void}
+     */
+    static #handleButtonAnimationErrors(props) {
+        if (props.selector.length < 0) {
+            throw new Error('Button selector must be defined');
+        }
+        if (Object.keys(props).length !== 3) {
+            throw new Error('Props must be 3 `selector`, `disabled`, `text`');
+        }
+        const validProps = ['selector', 'disabled', 'text'];
+        for (let x in props) {
+            if (!validProps.includes(x)) {
+                throw new Error(`Invalid property ${x}`);
+            }
+        }
+    }
 }
+
 
 export default Utils;

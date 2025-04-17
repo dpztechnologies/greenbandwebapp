@@ -1,7 +1,7 @@
 const http = require("http");
 const path = require('path');
 const fs = require('fs').promises;
-const dotenv = require('dotenv').config({ path: path.resolve("../.env") });
+const dotenv = require('dotenv').config({ path: path.resolve(".env") });
 const url = require('url');
 const { MimeTypes, StaticFilePath } = require('../config/constants.cjs')
 const querystring = require('querystring');
@@ -293,7 +293,7 @@ class RouteResolver {
 class RouteProvider {
 
   constructor() {
-    this.port = process.env.PORT;
+    this.port = process.env.PORT || 3000;
     this.router = new RouteResolver();
   }
 

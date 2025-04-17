@@ -10,10 +10,13 @@ const FormHandler = {
 }
 
 const form = document.querySelector("form");
-
+const formButton = 'button[type="submit"]'
+const buttonOnSubmit = { selector: formButton, disabled: true, text: 'Please Wait' }
+const buttonOnReceivedFeedback = { selector: formButton, disabled: false, text: 'Register Admin' }
 
 form.onsubmit = (e) => {
     e.preventDefault();
+    Utils.displayButtonAnimation(true, buttonOnSubmit);
     let formData = new FormData(form);
     formData.append('form', Utils.getFormId(form));
     const options = {
@@ -33,8 +36,13 @@ async function postData(form, options, successHandler) {
         const response = await fetch(endpoint, options);
         if (response.ok) {
             const data = await response.json();
-            successHandler(data, form)
+            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+            Utils.disableElement(formButton, true);
+            successHandler(data, form, () => {
+                Utils.disableElement(formButton, false);
+            })
         } else {
+            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
             let error = JSON.parse(await response.text());
             return Utils.handleFormErrors(error);
         }
