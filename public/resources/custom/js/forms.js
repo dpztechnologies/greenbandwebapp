@@ -11,8 +11,8 @@ const FormHandler = {
 
 const form = document.querySelector("form");
 const formButton = 'button[type="submit"]'
-const buttonOnSubmit = { selector: formButton, disabled: true, text: 'Please Wait' }
-const buttonOnReceivedFeedback = { selector: formButton, disabled: false, text: 'Register Admin' }
+const buttonOnSubmit = { selector: formButton, disabled: true }
+const buttonOnReceivedFeedback = { selector: formButton, disabled: false }
 
 form.onsubmit = (e) => {
     e.preventDefault();
@@ -40,6 +40,7 @@ async function postData(form, options, successHandler) {
             Utils.disableElement(formButton, true);
             successHandler(data, form, () => {
                 Utils.disableElement(formButton, false);
+                Utils.handleRedirect(data);
             })
         } else {
             Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);

@@ -2,7 +2,7 @@
 
 body {
     background-color: var(--background-color);
-    font-family: var(--font-family);
+    font-family: var(--font-family-regular);
     font-size: var(--default-font-size) !important;
 }
 
@@ -20,13 +20,17 @@ input,
 select,
 option {
     font-size: var(--default-font-size) !important;
-    font-family: var(--font-family) !important;
+    font-family: var(--font-family-regular) !important;
 }
 
 input:focus,
 select:focus {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 0.25rem var(--primary-opaque) !important;
+}
+
+.text-regular {
+    font-family: var(--font-family-regular) !important;
 }
 
 .text-medium {
@@ -45,6 +49,7 @@ select:focus {
 .center-on-desktop-top-on-mobile {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     min-height: 100vh;
     padding-top: 3rem;
     /* top spacing for mobile */

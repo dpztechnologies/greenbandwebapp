@@ -35,6 +35,9 @@ class Utils {
         return FormHandler[Utils.getFormId(form)];
     }
 
+
+
+
     /**
      * Handles form field errors and applies visual feedback.
      * 
@@ -159,6 +162,20 @@ class Utils {
         return;
     }
 
+
+    /**
+    * Handles client-side redirection based on the presence of a `redirect` property in the response data.
+  *
+  * @param {Object} data - The response object containing potential redirect information.
+  * @returns {void}
+  */
+    static handleRedirect(data) {
+        if (Object.hasOwnProperty.call(data, 'redirect')) {
+            window.location.href = data.redirect;
+        }
+        return;
+    }
+
     /**
      * Enables or disables a DOM element based on the given flag.
      * 
@@ -228,7 +245,7 @@ class Utils {
      * @param {string} props.text - The text to display in the button.
      * @returns {void}
      */
-    static displayButtonAnimation(display = false, props = { selector: "", disabled: false, text: '' }) {
+    static displayButtonAnimation(display = false, props = { selector: "", disabled: false }) {
         Utils.#handleButtonAnimationErrors(props)
         switch (display) {
             case true:
@@ -248,7 +265,6 @@ class Utils {
     static #buttonAnimationActions(action, props) {
         Utils.classListActions(action, ['d-none'], `${props.selector} .spinner`);
         Utils.disableElement(props.selector, props.disabled);
-        Utils.writeInnerHTML(`${props.selector} button-text`, props.text);
         return;
     }
 
@@ -263,10 +279,10 @@ class Utils {
         if (props.selector.length < 0) {
             throw new Error('Button selector must be defined');
         }
-        if (Object.keys(props).length !== 3) {
-            throw new Error('Props must be 3 `selector`, `disabled`, `text`');
+        if (Object.keys(props).length !== 2) {
+            throw new Error('Props must be 2 `selector`, `disabled`');
         }
-        const validProps = ['selector', 'disabled', 'text'];
+        const validProps = ['selector', 'disabled'];
         for (let x in props) {
             if (!validProps.includes(x)) {
                 throw new Error(`Invalid property ${x}`);

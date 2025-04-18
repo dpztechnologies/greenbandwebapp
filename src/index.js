@@ -4,6 +4,8 @@ const utilities = require("./modules/utilities.cjs");
 const { Validator } = require('./middlewares/validate.cjs');
 const { Sanitizer } = require('./middlewares/sanitize.cjs');
 const { Register } = require("./controllers/registration.cjs");
+const Login = require("./controllers/login.cjs");
+const { Auth } = require('./middlewares/auth.cjs');
 
 const app = routeProvider();
 
@@ -54,6 +56,15 @@ app.get("/register", [], (req, res) => {
 });
 
 
+app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
+    fs.readFile(utilities.getFilePath("super-admin/admins"), (err, data) => {
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.write(data);
+        res.end();
+    });
+})
+
+
 
 /**
  * `````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -62,12 +73,13 @@ app.get("/register", [], (req, res) => {
  */
 
 
-app.post("/process-login", [Sanitizer.sanitize, Validator.validate], (req, res) => {
+app.post("/process-login", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
     if (!req.body) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Missing request body' }));
         return;
     }
+    return await Login.admin(req.body, res);
 })
 
 app.post("/process-registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {

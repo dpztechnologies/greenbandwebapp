@@ -31,14 +31,12 @@ class Database {
      * Sets up the connection to the MySQL database using credentials from environment variables.
      */
     constructor() {
-        this.#conn = mysql.createConnection({
+        this.#conn = mysql.createPool({
+            connectionLimit: 100,
             host: process.env.DBHOST,
             user: process.env.DBUSER,
             password: process.env.DBPASSWORD,
             database: process.env.DBNAME
-        });
-        this.#conn.connect((err) => {
-            if (err) throw err;
         });
     }
 
@@ -85,7 +83,7 @@ class Database {
      */
     select(fields = []) {
         try {
-            if (fields.length > 0) {
+            if (fields.length > 0 && Array.isArray(fields)) {
                 this.#sql = `SELECT ${fields.join(', ')}`;
             } else {
                 throw new Error("Warning: Fields must be defined");
@@ -251,6 +249,11 @@ class Database {
         if (!this.instance) {
             this.instance = new this();
         }
+        return this.instance;
+    }
+
+    static reset() {
+        this.instance = new this();
         return this.instance;
     }
 }

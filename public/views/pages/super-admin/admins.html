@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | Users</title>
+    <link rel="stylesheet" href="../../../resources/lib/bootstrap.css" />
+    <link rel="stylesheet" href="../../../resources/custom/css/style.css" />
+    <script src="../../../resources/lib/bootstrap.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <section class="d-flex flex-direction-row">
+        <aside class="position-fixed h-100 bg-white p-4 d-none d-md-block">
+            <div class="d-flex justify-content-start align-items-center mt-2">
+                <div data-name="icon">
+                    <div class="rounded bg-primary">
+                        <h1 class="px-2 m-0 text-white text-center text-regular">G</h1>
+                    </div>
+                </div>
+                <div data-name="heading">
+                    <h3 class="text-nowrap text-medium ms-3">Greenband Web App</h3>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <a href="/super-admin/admins"
+                    class="d-flex justify-content-between align-items-center text-decoration-none text-secondary">
+                    <div class="d-flex align-items-center">
+                        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_495_3577" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1" y="1"
+                                width="14" height="15">
+                                <path
+                                    d="M7.3335 9.16562L10.4935 4.16562C10.6868 4.27895 10.8735 4.39895 11.0468 4.53229L12.7268 3.85895C12.8335 3.81895 13.0135 3.83895 13.0668 3.94562L14.4468 6.33229C14.5135 6.44562 14.4868 6.63229 14.4002 6.71229L12.9535 7.83229C12.9868 8.05229 13.0002 8.27229 13.0002 8.49895L7.3335 9.16562Z"
+                                    fill="white" />
+                                <path
+                                    d="M7.0894 8.25468L12.9995 8.49132C12.998 8.71542 12.9875 8.93708 12.9587 9.15386L14.3818 10.2721C14.4698 10.3445 14.5424 10.5104 14.4767 10.6099L13.0998 12.9983C13.035 13.1127 12.86 13.183 12.7474 13.1479L11.0541 12.4551C10.8802 12.5939 10.6964 12.7155 10.5001 12.8288L7.0894 8.25468Z"
+                                    fill="white" />
+                                <path
+                                    d="M7.75615 7.58907L10.5063 12.8257C10.3115 12.9365 10.1142 13.0381 9.91207 13.1216L9.65519 14.9132C9.6365 15.0255 9.52918 15.1714 9.41014 15.1643L6.65322 15.1661C6.52174 15.1671 6.37342 15.0507 6.34747 14.9356L6.10085 13.1228C5.89366 13.0417 5.69647 12.9432 5.50017 12.8299L7.75615 7.58907Z"
+                                    fill="white" />
+                                <path
+                                    d="M8.66675 7.83243L5.50675 12.8324C5.31341 12.7191 5.12675 12.5991 4.95341 12.4658L3.27341 13.1391C3.16675 13.1791 2.98675 13.1591 2.93341 13.0524L1.55341 10.6658C1.48675 10.5524 1.51341 10.3658 1.60008 10.2858L3.04675 9.16576C3.01341 8.94576 3.00008 8.72576 3.00008 8.49909L8.66675 7.83243Z"
+                                    fill="white" />
+                                <path
+                                    d="M8.91084 8.74336L3.00071 8.50672C3.0022 8.28262 3.01279 8.06097 3.04159 7.84419L1.61847 6.72593C1.53049 6.65356 1.45781 6.48767 1.52352 6.38815L2.90043 3.9997C2.96525 3.8853 3.14024 3.81506 3.25286 3.85012L4.94614 4.54297C5.12 4.4041 5.30386 4.28255 5.50016 4.16922L8.91084 8.74336Z"
+                                    fill="white" />
+                                <path
+                                    d="M8.24409 9.41093L5.49397 4.17429C5.68878 4.06353 5.88604 3.96187 6.08817 3.87843L6.34505 2.08684C6.36374 1.97446 6.47106 1.82858 6.59011 1.83572L9.34702 1.83394C9.4785 1.83287 9.62683 1.9493 9.65278 2.06435L9.89939 3.8772C10.1066 3.95834 10.3038 4.05679 10.5001 4.17012L8.24409 9.41093Z"
+                                    fill="white" />
+                                <path
+                                    d="M8.00008 10.8327C9.28875 10.8327 10.3334 9.78801 10.3334 8.49935C10.3334 7.21068 9.28875 6.16602 8.00008 6.16602C6.71142 6.16602 5.66675 7.21068 5.66675 8.49935C5.66675 9.78801 6.71142 10.8327 8.00008 10.8327Z"
+                                    fill="black" />
+                            </mask>
+                            <g mask="url(#mask0_495_3577)">
+                                <path d="M16 0.5H0V16.5H16V0.5Z" fill="#7F7184" />
+                            </g>
+                        </svg>
+
+                        <span class="ms-3">System Admins</span>
+
+                    </div>
+
+
+                    <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M5.99128 3.38052L11.2891 8.50052L5.99128 13.6205C5.84689 13.7596 5.65315 13.8356 5.4527 13.8319C5.25224 13.8281 5.06149 13.7449 4.9224 13.6005C4.78331 13.4561 4.70727 13.2624 4.71102 13.0619C4.71477 12.8615 4.798 12.6707 4.9424 12.5316L9.11573 8.50052L4.9424 4.46497C4.798 4.32588 4.71477 4.13512 4.71102 3.93467C4.70727 3.73421 4.78331 3.54048 4.9224 3.39608C5.06149 3.25168 5.25224 3.16846 5.4527 3.16471C5.65315 3.16096 5.84689 3.23699 5.99128 3.37608V3.38052Z"
+                            fill="#7F7184" />
+                    </svg>
+                </a>
+            </div>
+        </aside>
+    </section>
+
+    <main class="container-fluid d-flex justify-content-md-end">
+        <nav class="col-md-10 col-12 p-3 py-md-4 px-md-0 mt-md-1 d-flex justify-content-between">
+            <div class="d-flex align-items-center ms-md-5">
+                <svg width="30" height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M25 6.75H10M25 15.5H5M25 24.25H15" stroke="#76009F" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <h1 class="m-0 ms-3">System Admins</h1>
+            </div>
+            <div class="me-md-2">
+                <div class="d-flex justify-content-start align-items-start mt-2">
+                    <div data-name="heading" class="me-3 d-flex align-items-end flex-column">
+                        <h3 class="text-nowrap text-medium m-0">Admin</h3>
+                        <small class="text-nowrap text-secondary">Super Admin</small>
+                    </div>
+                    <div data-name="icon">
+                        <div class="rounded bg-primary">
+                            <h1 class="px-2 m-0 text-white text-center text-regular">A</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </main>
+
+
+
+</body>
+
+</html>
