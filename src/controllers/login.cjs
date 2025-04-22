@@ -8,9 +8,18 @@ const Routes = require('../config/routes.cjs');
 class Login {
     static async admin(data, res) {
         try {
-            const sessionId = await Auth.run().createSession({ from: data.email, column: 'email' });
+            const authInstance = Auth.run({
+                cookieOptions: {
+                    httpOnly: true,
+                    path: '/',
+                    secure: false,
+                    sameSite: 'lax',
+                    maxAge: 60 * 60 * 1000
+                }
+            })
+            const sessionId = await authInstance.createSession({ from: data.email, column: 'email' });
             res.writeHead(200, {
-                'Set-Cookie': Auth.run().buildCookieHeader(sessionId),
+                'Set-Cookie': authInstance.buildCookieHeader(sessionId),
                 'Content-Type': 'application/json'
             })
             const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email')
