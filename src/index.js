@@ -68,7 +68,7 @@ app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
 
 app.get('/show-admins', [Auth.authenticate], async (req, res) => {
     try {
-        const query = await DB.run()
+        const query = await DB.reset()
             .select(['*'])
             .from('admins')
             .join('INNER JOIN', 'admins_activity')
