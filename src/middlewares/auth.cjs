@@ -5,7 +5,7 @@ const DB = require('../modules/database.cjs')
 const Routes = require('../config/routes.cjs')
 
 
-class AuthMiddleware {
+class AuthMiddleware extends Auth {
 
     /**
    * Middleware to authenticate a user session and authorize access based on role.
@@ -51,7 +51,6 @@ class AuthMiddleware {
         res.end(`<h1 style='text-align:center; padding:5rem'>${msg}</h1>`);
         return this;
     }
-
 
 }
 

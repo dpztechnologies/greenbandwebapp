@@ -1,13 +1,5 @@
 import Utils from "./utils.js";
-
-
-/**
- * Defines all forms and their endpoints
- */
-const FormHandler = {
-    'admin-registration': '/process-registration',
-    'admin-login': '/process-login'
-}
+import Endpoints from "./endpoints.js";
 
 const form = document.querySelector("form");
 const formButton = 'button[type="submit"]'
@@ -32,7 +24,7 @@ form.onsubmit = (e) => {
 
 async function postData(form, options, successHandler) {
     try {
-        const endpoint = Utils.getUrl(Utils.getFormEndpoint(FormHandler, form));
+        const endpoint = Utils.getUrl(Utils.getFormEndpoint(Endpoints, form));
         const response = await fetch(endpoint, options);
         if (response.ok) {
             const data = await response.json();

@@ -1,3 +1,5 @@
+import Endpoints from "./endpoints.js";
+
 /**
  * @author DPZTechnologies
  * @date Thu Apr 03 2025 15:17:25 GMT+0300 (East Africa Time)
@@ -36,6 +38,14 @@ class Utils {
     }
 
 
+    static getEndpoint(source) {
+        if (Endpoints.hasOwnProperty(source)) {
+            return Endpoints[source]
+        }
+        throw new Error(`Invalid endpoint source ${source}`)
+    }
+
+
 
 
     /**
@@ -65,7 +75,7 @@ class Utils {
         }
 
         selectors.forEach(selector => {
-            const allFields = document.querySelectorAll(selector);
+            const allFields = document.querySelectorAll(`#${this.getFormId()} ${selector}`);
             allFields.forEach(field => {
                 let name = field.getAttribute('name');
                 if (!errorFields.has(name)) {
@@ -289,6 +299,61 @@ class Utils {
             }
         }
     }
+
+    static async processLogout(redirectUrl) {
+        try {
+            let options = {
+                'method': 'POST',
+                'body': new FormData()
+            }
+            const res = await fetch(Utils.getEndpoint('logout'), options);
+            if (res.ok) {
+                const data = await res.json();
+                Utils.displayToastMessage('#alert-toast', data.message, 'bg-info', () => {
+                    window.location.href = redirectUrl;
+                })
+            }
+        } catch (err) {
+            console.error(err)
+        }
+
+    }
+
+    static displaySpinner(display = false, selector) {
+        switch (display) {
+            case true:
+                Utils.classListActions('remove', ['d-none'], selector);
+                break;
+            case false:
+                Utils.classListActions('add', ['d-none'], selector);
+                break;
+        }
+    }
+
+    static async getData(selector, handler) {
+        const spinnerSelector = '#tableLazyLoading';
+        Utils.displaySpinner(true, spinnerSelector);
+        try {
+            const res = await fetch(Utils.getEndpoint('show-admins'));
+            if (res.ok) {
+                Utils.displaySpinner(false, spinnerSelector);
+                const data = await res.json();
+                handler(selector, data)
+                return;
+            } else {
+                Utils.displayToastMessage("#alert-toast",
+                    "Something unexexpected happened",
+                    "bg-danger",
+                    () => {
+                        Utils.displaySpinner(false, spinnerSelector);
+                    }
+                )
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
 }
 
 

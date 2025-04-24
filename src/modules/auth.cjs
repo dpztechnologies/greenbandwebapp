@@ -141,7 +141,7 @@ class Auth {
      * @returns {Promise<void>}
      */
     async deleteSessionFromRequest(req) {
-        const cookies = this.parseCookies(req.headers.cookies);
+        const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
         if (!sessionId) return;
         await DB.reset().delete().from('sessions').where(['id', '=', sessionId]).query()
@@ -152,7 +152,7 @@ class Auth {
      * @returns {string} The `Set-Cookie` header that clears the cookie.
      */
     destroyCookieHeader() {
-        return `${this, this.cookieName}=; Max-Age=0; Path=/; HttpOnly`
+        return `${this.cookieName}=; Max-Age=0; Path=/; HttpOnly`
     }
 
     /**

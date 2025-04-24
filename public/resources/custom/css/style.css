@@ -130,16 +130,29 @@ input[type] .text-regular {
     border-color: var(--success-dark) !important;
 }
 
+
+.bg-secondary {
+    background-color: var(--secondary) !important;
+}
+
 .bg-danger {
     background-color: var(--danger) !important;
     border-color: var(--danger) !important;
 }
 
 
+.dropdown {
+    cursor: pointer;
+}
+
+
+.modal-backdrop.show {
+    background-color: var(--primary-translucent);
+}
+
 
 .form-check-input:checked {
     background-color: var(--primary);
-    /* green */
     border-color: var(--primary);
 }
 
@@ -147,15 +160,18 @@ input[type] .text-regular {
     box-shadow: 0 0 0 0.25rem var(--primary-opaque);
 }
 
+.form-check-input {
+    background-color: var(--background-color);
+    border: none;
+}
+
 th,
 td {
     white-space: nowrap;
     padding-block: 1rem !important;
-}
-
-td {
     padding-inline-end: 1rem !important;
 }
+
 
 
 

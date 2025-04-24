@@ -8,14 +8,24 @@ class Registration {
         try {
             data = Utilities.replaceObjectKeysPattern(data, [/-/g], ['_']);
             data.password = await Hashing.hashPassword(data.password)
-            data.uid = Utilities.getRandom(1000, 10000);
+            data.aid = Utilities.getRandom(1000, 10000);
             delete data.form;
-            const insert = await DB.run().insert().into('admins', data);
-            if (insert) {
-                return { success: true, message: 'Account has been created successfully' };
-            } else {
-                return { success: false, message: 'Account creation failed' };
+
+            const adminsTable = 'admins';
+            const adminsActivity = 'admins_activity';
+            const insertAdmin = await DB.run().insert().into(adminsTable, data)
+            const insertAdminActivity = await DB.run().insert().into(adminsActivity, { 'aid': data.aid })
+
+            if (!insertAdminActivity) {
+                return { success: false, message: `Failed to insert admins activity log in ${adminsActivity}` };
             }
+
+            if (!insertAdmin) {
+                return { success: false, message: `Failed to insert admins data in ${adminsActivity}` };
+            }
+
+            return { success: true, message: 'Account has been created successfully' };
+
         } catch (err) {
             return { success: false, message: 'Something unexpected happened', error: err.message }
         }

@@ -208,6 +208,65 @@ class Database {
         }
     }
 
+    /**
+     * Adds a JOIN clause to the SQL query.
+     *
+     * @param {string} type - The type of join (e.g., 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN').
+     * @param {string} table - The name of the table to join.
+     * @returns {this} The current instance for chaining.
+     */
+    join(type, table) {
+        this.#sql += ` ${type} ${table}`;
+        return this;
+    }
+
+    /**
+    * Adds an ON condition for the previously defined JOIN clause.
+    *
+    * @param {string} baseTableColumn - The column from the base table (e.g., 'users.id').
+    * @param {string} joinedTableColumn - The column from the joined table (e.g., 'orders.user_id').
+    * @returns {this} The current instance for chaining.
+    */
+    on(baseTableColumn, joinedTableColumn) {
+        this.#sql += ` ON ${baseTableColumn} = ${joinedTableColumn}`;
+        return this;
+    }
+
+    /**
+ * Begins an SQL UPDATE statement for the specified table.
+ *
+ * @param {string} table - The name of the table to update.
+ * @returns {this} The current instance to allow method chaining.
+ *
+ * @example
+ * queryBuilder.update('users')
+ */
+    update(table) {
+        this.#sql = `UPDATE ${table}`;
+        return this;
+    }
+
+    /**
+     * Adds a SET clause to the current SQL UPDATE statement.
+     * Accepts an object where keys are column names and values are the values to set.
+     * Uses parameterized placeholders to prevent SQL injection.
+     *
+     * @param {Object} data - An object mapping columns to new values.
+     * @returns {this} The current instance to allow method chaining.
+     *
+     * @example
+     * queryBuilder.set({ name: 'John', age: 30 })
+     * // Produces: "SET name = ?, age = ?"
+     */
+    set(data) {
+        const setClauses = [];
+        for (let key in data) {
+            setClauses.push(`${key} = ?`);
+            this.#params.push(data[key]);
+        }
+        this.#sql += ` SET ${setClauses.join(', ')}`;
+        return this;
+    }
 
     /**
     * Count the number of records in a table.
