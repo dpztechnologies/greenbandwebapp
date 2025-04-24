@@ -79,7 +79,7 @@ class Auth {
     async garbageCollectSession(data = { from: '', column: '' }) {
         const count = DB.run().count('sessions', [data.column, '=', data.from]);
         if (count) {
-            await DB.run().delete().from('sessions').where([data.column, '=', data.field]).query()
+            await DB.run().delete().from('sessions').where([data.column, '=', data.from]).query()
             return;
         }
         return;

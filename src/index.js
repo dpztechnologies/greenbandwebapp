@@ -45,16 +45,6 @@ app.get("/login", [], (req, res) => {
     });
 });
 
-/**
- * Registration page
- */
-app.get("/register", [], (req, res) => {
-    fs.readFile(utilities.getFilePath("register"), (err, data) => {
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.write(data);
-        res.end();
-    });
-});
 
 
 app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
@@ -66,14 +56,21 @@ app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
 })
 
 
+async function getAllAdmins() {
+    return await DB.reset()
+        .select(['*'])
+        .from('admins')
+        .join('INNER JOIN', 'admins_activity')
+        .on('admins.aid', 'admins_activity.aid')
+        .orderby('admins.id', 'DESC')
+        .limit(10)
+        .query();
+}
+
+
 app.get('/show-admins', [Auth.authenticate], async (req, res) => {
     try {
-        const query = await DB.reset()
-            .select(['*'])
-            .from('admins')
-            .join('INNER JOIN', 'admins_activity')
-            .on('admins.aid', 'admins_activity.aid')
-            .query();
+        const query = await getAllAdmins();
         const results = query.getResults();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));

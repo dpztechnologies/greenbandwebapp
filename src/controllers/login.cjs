@@ -35,7 +35,7 @@ class Login {
     }
 
     static async updateStatus(email) {
-        const query = await DB.run().select(['aid']).from('admins').where(['email', '=', email]).query();
+        const query = await DB.reset().select(['aid']).from('admins').where(['email', '=', email]).query();
         const results = query.getResults();
         if (!Array.isArray(results) || results.length === 0) return false;
 

@@ -34,7 +34,7 @@ function renderAdminsTable(selector, data) {
         return `
             <tr>
                 <td>${item.firstname} ${item.lastname}</td>
-                <td class="d-none d-md-table-cell">${item.email}</td>
+                <td class="d-none d-sm-table-cell">${item.email}</td>
                 <td class="d-none d-md-table-cell">
                     <div class="d-flex align-items-center">
                         ${item.status}
@@ -50,7 +50,7 @@ function renderAdminsTable(selector, data) {
                     </div>
                 </td>
                 <td>
-                    <div class="d-flex justify-content-start align-items-center">
+                    <div class="d-flex justify-content-lg-start justify-content-end align-items-center">
                         <a class="me-2" title="View">
                             <!-- Eye Icon -->
                            <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">

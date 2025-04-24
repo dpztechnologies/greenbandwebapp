@@ -145,6 +145,9 @@ input[type] .text-regular {
     cursor: pointer;
 }
 
+.dropdown-item:active {
+    background-color: var(--primary);
+}
 
 .modal-backdrop.show {
     background-color: var(--primary-translucent);
@@ -159,6 +162,7 @@ input[type] .text-regular {
 .form-check-input:focus {
     box-shadow: 0 0 0 0.25rem var(--primary-opaque);
 }
+
 
 .form-check-input {
     background-color: var(--background-color);

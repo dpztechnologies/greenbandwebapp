@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const path = require("path");
 const dotenv = require('dotenv').config({ path: path.resolve("../../.env") });
 const Utilities = require('./utilities.cjs')
@@ -36,7 +36,7 @@ class Database {
             host: process.env.DBHOST,
             user: process.env.DBUSER,
             password: process.env.DBPASSWORD,
-            database: process.env.DBNAME
+            database: process.env.DBNAME,
         });
     }
 
@@ -63,17 +63,15 @@ class Database {
      * @returns {Promise} A promise that resolves with the current instance after the query completes.
      */
     async query(sql = this.#sql, params = this.#params) {
-        return new Promise((resolve, reject) => {
-            this.#conn.query(sql, params, (err, results, fields) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                this.#setResults(results);
-                resolve(this);
-            });
-        });
+        try {
+            const [results] = await this.#conn.execute(sql, params);
+            this.#setResults(results);
+            return this;
+        } catch (err) {
+            throw err;
+        }
     }
+
 
     /**
      * Method to start a SELECT query with specified fields.
@@ -291,6 +289,18 @@ class Database {
             console.error("Count Error:", err.message);
             throw err;
         }
+    }
+
+
+    limit(count) {
+        this.#sql += ` LIMIT ${count}`
+        return this;
+    }
+
+
+    orderby(field, order) {
+        this.#sql += ` ORDER BY ${field} ${order}`
+        return this;
     }
 
 
