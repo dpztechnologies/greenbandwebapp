@@ -4,7 +4,7 @@ const Utilities = require("../modules/utilities.cjs");
 
 class Registration {
 
-    static async admin(data) {
+    static async processAdmin(data) {
         try {
             data = Utilities.replaceObjectKeysPattern(data, [/-/g], ['_']);
             data.password = await Hashing.hashPassword(data.password)
@@ -28,6 +28,24 @@ class Registration {
 
         } catch (err) {
             return { success: false, message: 'Something unexpected happened', error: err.message }
+        }
+    }
+
+    static async admin(req, res) {
+        if (!req.body) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Missing request body' }));
+            return;
+        }
+        const response = await this.processAdmin(req.body);
+        if (response.success) {
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(response));
+            return;
+        } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(response));
+            return;
         }
     }
 }

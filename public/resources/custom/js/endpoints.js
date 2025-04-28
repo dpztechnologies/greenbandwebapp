@@ -4,8 +4,9 @@
 const Endpoints = {
     'admin-registration': '/process-registration',
     'admin-login': '/process-login',
-    'show-admins': '/show-admins',
-    'logout': '/logout'
+    'view-admins': '/view-admins',
+    'logout': '/logout',
+    'view-admin': '/view-admin'
 }
 
 

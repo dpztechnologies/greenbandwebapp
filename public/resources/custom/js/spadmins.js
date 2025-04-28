@@ -2,7 +2,30 @@ import Utils from './utils.js';
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await Utils.getData('#adminsTable', renderAdminsTable);
+
+    /**
+     * Admins profile
+     */
+
+    await Utils.getData({
+        endpoint: 'view-admin',
+        beforeSend: RenderAdminProfile.beforeSend,
+        success: RenderAdminProfile.success,
+        fail: RenderAdminProfile.fail,
+        handler: RenderAdminProfile.display,
+    })
+
+    /**
+     * Admins Table
+     */
+    await Utils.getData({
+        endpoint: 'view-admins',
+        beforeSend: RenderAdminsTable.beforeSend,
+        success: RenderAdminsTable.success,
+        fail: RenderAdminsTable.fail,
+        handler: RenderAdminsTable.display
+    });
+
     processLogout();
 })
 
@@ -16,22 +39,34 @@ function processLogout() {
 }
 
 
+function getError(message, error, callback) {
+    Utils.displayToastMessage("#alert-toast",
+        `${message}. Error: ${error}`,
+        "bg-danger",
+        (typeof callback === 'function') ? callback() : () => { return false }
+    )
+}
 
-/**
- * Renders a table of admin data into a selected DOM element.
- *
- * @param {string} selector - The CSS selector of the target table body or container.
- * @param {Array<Object>} data - The array of admin data objects.
- */
-function renderAdminsTable(selector, data) {
-    const render = document.querySelector(selector);
-    if (!render) return;
 
-    const rows = data.map(item => {
-        const statusClass = item.status === 'Online' ? 'bg-success' : 'bg-secondary';
-        const isChecked = item.can_access === 1 ? 'checked' : '';
+class RenderAdminsTable {
 
-        return `
+    static #spinner = '#tableLazyLoading';
+
+    static #target = '#adminsTable';
+
+    static beforeSend() {
+        Utils.displaySpinner(true, RenderAdminsTable.#spinner);
+    }
+
+    static display(data) {
+        const render = document.querySelector(RenderAdminsTable.#target);
+        if (!render) throw new Error(`Invalid target ${RenderAdminsTable.#target}`);
+
+        const rows = data.map(item => {
+            const statusClass = item.status === 'Online' ? 'bg-success' : 'bg-secondary';
+            const isChecked = item.can_access === 1 ? 'checked' : '';
+
+            return `
             <tr>
                 <td>${item.firstname} ${item.lastname}</td>
                 <td class="d-none d-sm-table-cell">${item.email}</td>
@@ -84,10 +119,72 @@ function renderAdminsTable(selector, data) {
                 </td>
             </tr>
         `;
-    });
+        });
 
-    render.innerHTML = rows.join('');
+        render.innerHTML = rows.join('');
+    }
+
+    static async success(res, handler) {
+        Utils.displaySpinner(false, RenderAdminsTable.#spinner);
+        const data = await res.json();
+        handler(data)
+        return;
+    }
+
+    static fail(error) {
+        getError('Something unexpected happened while loading the admins table', error, () => {
+            Utils.displaySpinner(false, RenderAdminsTable.#spinner);
+        })
+    }
 }
+
+
+
+class RenderAdminProfile {
+
+    static #adminAvatarSpinner = '#adminAvatar .spinner';
+
+    static #adminAvatar = '#adminAvatar h1';
+
+    static #adminDetailsFirstname = '#adminDetails .firstname';
+
+    static #adminDetailsRole = '#adminDetails .role';
+
+
+    static beforeSend() {
+        return false;
+    }
+
+    static display(data) {
+        //Avatar
+        Utils.classListActions('add', ['d-none'], RenderAdminProfile.#adminAvatarSpinner);
+        const avatarElement = document.querySelector(RenderAdminProfile.#adminAvatar)
+        avatarElement.classList.remove('d-none');
+        const avatar = data.firstname.slice(0, 1).toUpperCase();
+        avatarElement.innerHTML = avatar;
+        // Role
+        const roleElement = document.querySelector(RenderAdminProfile.#adminDetailsRole);
+        roleElement.classList.remove('d-none');
+        roleElement.innerHTML = data.role;
+        //Firstname
+        const firstnameElement = document.querySelector(RenderAdminProfile.#adminDetailsFirstname);
+        firstnameElement.innerHTML = data.firstname
+        return;
+    }
+
+    static async success(res, handler) {
+        const data = await res.json();
+        handler(data[0]);
+        return
+    }
+
+    static fail(error) {
+        getError('Something unexpected happened while loading admins admins profile', error);
+    }
+
+
+}
+
 
 
 

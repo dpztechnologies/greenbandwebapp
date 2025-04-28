@@ -19,9 +19,7 @@ class AuthMiddleware extends Auth {
    * @returns {Promise<boolean|void>} - Returns true if authorized, otherwise ends the response.
    */
     static async authenticate(req, res, next) {
-        const session = await Auth.run().getSessionFromRequest(req);
-        if (!session) return AuthMiddleware.#reject(res, 'Session not established');
-        const email = (typeof session[0] !== 'undefined' && session[0].hasOwnProperty('email')) ? session[0].email : AuthMiddleware.#reject(res, 'Your session has expired');
+        const email = await AuthMiddleware.getEmailFromSession(req, res)
         const result = await DB.reset()
             .select(['role'])
             .from('admins')
@@ -50,6 +48,14 @@ class AuthMiddleware extends Auth {
         res.writeHead(403, { 'Content-Type': 'text/html' });
         res.end(`<h1 style='text-align:center; padding:5rem'>${msg}</h1>`);
         return this;
+    }
+
+
+    static async getEmailFromSession(req, res) {
+        const session = await Auth.run().getSessionFromRequest(req);
+        if (!session) return AuthMiddleware.#reject(res, 'Session not established');
+        const email = (typeof session[0] !== 'undefined' && session[0].hasOwnProperty('email')) ? session[0].email : AuthMiddleware.#reject(res, 'Your session has expired');
+        return email;
     }
 
 }

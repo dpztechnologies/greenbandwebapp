@@ -6,8 +6,15 @@ const Routes = require('../config/routes.cjs');
 
 
 class Login {
-    static async admin(data, res) {
+
+    static async admin(req, res) {
+        if (!req.body) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Missing request body' }));
+            return;
+        }
         try {
+            const data = req.body
             const statusUpdate = await Login.updateStatus(data.email)
             if (statusUpdate) {
                 const authInstance = Auth.run({

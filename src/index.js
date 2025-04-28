@@ -6,7 +6,8 @@ const { Sanitizer } = require('./middlewares/sanitize.cjs');
 const { Register } = require("./controllers/registration.cjs");
 const Login = require("./controllers/login.cjs");
 const { Auth } = require('./middlewares/auth.cjs');
-const DB = require("./modules/database.cjs");
+const Query = require('./controllers/queries.cjs');
+const { Logout } = require("./middlewares/logout.cjs");
 
 const app = routeProvider();
 
@@ -56,21 +57,11 @@ app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
 })
 
 
-async function getAllAdmins() {
-    return await DB.reset()
-        .select(['*'])
-        .from('admins')
-        .join('INNER JOIN', 'admins_activity')
-        .on('admins.aid', 'admins_activity.aid')
-        .orderby('admins.id', 'DESC')
-        .limit(10)
-        .query();
-}
 
 
-app.get('/show-admins', [Auth.authenticate], async (req, res) => {
+app.get('/view-admins', [Auth.authenticate], async (req, res) => {
     try {
-        const query = await getAllAdmins();
+        const query = await Query.viewAdmins(5);
         const results = query.getResults();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
@@ -80,26 +71,21 @@ app.get('/show-admins', [Auth.authenticate], async (req, res) => {
     }
 });
 
-
-
-app.post('/logout', [Auth.authenticate], async (req, res) => {
+app.get('/view-admin', [Auth.authenticate], async (req, res) => {
     try {
-        await Auth.run().deleteSessionFromRequest(req); // ✅ await it
-        const clearCookieHeader = Auth.run().destroyCookieHeader();
-
-        res.writeHead(200, {
-            'Content-Type': 'application/json',
-            'Set-Cookie': clearCookieHeader // ✅ send the cookie
-        });
-
-        res.end(JSON.stringify({
-            message: 'Logout request was successful, you will be redirected shortly'
-        }));
+        const email = await Auth.getEmailFromSession(req, res);
+        const query = await Query.viewAdmin(email, ['admins.firstname', 'admins.role'])
+        const results = query.getResults();
+        console.log(results);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
     } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: false, error: error.message }));
     }
-});
+})
+
+
 
 
 
@@ -112,32 +98,17 @@ app.post('/logout', [Auth.authenticate], async (req, res) => {
 
 
 app.post("/process-login", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
-    if (!req.body) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Missing request body' }));
-        return;
-    }
-    return await Login.admin(req.body, res);
+    return await Login.admin(req, res);
 })
 
 app.post("/process-registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
-    if (!req.body) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Missing request body' }));
-        return;
-    }
-    const response = await Register.admin(req.body);
-    if (response.success) {
-        res.writeHead(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify(response));
-        return;
-    } else {
-        res.writeHead(400, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify(response));
-        return;
-    }
+    return Register.admin(req, res);
 })
 
+
+app.post('/logout', [Auth.authenticate], async (req, res) => {
+    return Logout.exit(req, res);
+});
 
 
 

@@ -1,7 +1,8 @@
 const Routes = {
     'Super Admin': {
         'dashboard': '/super-admin/dashboard',
-        'show-admins': '/show-admins',
+        'view-admins': '/view-admins',
+        'view-admin': '/view-admin',
         'admins': '/super-admin/admins',
         'default': '/super-admin/admins',
         'logout': '/logout'

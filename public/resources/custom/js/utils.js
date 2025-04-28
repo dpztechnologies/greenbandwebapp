@@ -330,27 +330,17 @@ class Utils {
         }
     }
 
-    static async getData(selector, handler) {
-        const spinnerSelector = '#tableLazyLoading';
-        Utils.displaySpinner(true, spinnerSelector);
+    static async getData(handlers = { endpoint, beforeSend, success, fail, handler }) {
+        handlers.beforeSend();
         try {
-            const res = await fetch(Utils.getEndpoint('show-admins'));
+            const res = await fetch(Utils.getEndpoint(handlers.endpoint));
             if (res.ok) {
-                Utils.displaySpinner(false, spinnerSelector);
-                const data = await res.json();
-                handler(selector, data)
-                return;
+                return await handlers.success(res, handlers.handler);
             } else {
-                Utils.displayToastMessage("#alert-toast",
-                    "Something unexexpected happened",
-                    "bg-danger",
-                    () => {
-                        Utils.displaySpinner(false, spinnerSelector);
-                    }
-                )
+                handlers.fail(await res.text());
             }
         } catch (err) {
-            console.error(err)
+            handlers.fail(err);
         }
     }
 

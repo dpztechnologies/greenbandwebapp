@@ -27,7 +27,7 @@ select:focus {
     box-shadow: 0 0 0 0.25rem var(--primary-opaque) !important;
 }
 
-input[type] .text-regular {
+.text-regular {
     font-family: var(--font-family-regular) !important;
 }
 
@@ -177,8 +177,25 @@ td {
 }
 
 
+.avatar {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-
+.avatar h1,
+.avatar h2,
+.avatar h3,
+.avatar h4,
+.avatar h5,
+.avatar h6,
+.avatar span,
+.avatar p {
+    padding: 0;
+    margin: 0
+}
 
 .card,
 .card-header {

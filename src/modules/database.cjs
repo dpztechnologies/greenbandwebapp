@@ -68,6 +68,8 @@ class Database {
             this.#setResults(results);
             return this;
         } catch (err) {
+            err.query = sql;
+            err.params = params;
             throw err;
         }
     }

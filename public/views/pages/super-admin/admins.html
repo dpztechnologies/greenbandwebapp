@@ -107,8 +107,8 @@
             <main class="px-4 p-md-4">
                 <div class="d-flex justify-content-start align-items-center mt-2">
                     <div data-name="icon">
-                        <div class="rounded bg-primary">
-                            <h1 class="px-2 m-0 text-white text-center text-regular">G</h1>
+                        <div class="rounded bg-primary avatar">
+                            <h1 class="text-white text-center text-regular">G</h1>
                         </div>
                     </div>
                     <div data-name="heading">
@@ -183,13 +183,15 @@
                 <!-- Navbar dropdown -->
                 <div class="me-md-2 dropdown" id="dropdownMenuButton" data-bs-toggle="dropdown">
                     <div class="d-flex justify-content-start align-items-center mt-2">
-                        <div data-name="heading" class="me-3 d-none d-md-flex align-items-end flex-column">
-                            <h3 class="text-nowrap text-medium m-0">Admin</h3>
-                            <small class="text-nowrap text-secondary">Super Admin</small>
+                        <div id="adminDetails" class="me-3 d-none d-md-flex align-items-end flex-column">
+                            <h3 class="text-nowrap text-medium m-0 firstname">Loading...</h3>
+                            <small class="text-nowrap text-secondary role d-none">Super Admin</small>
                         </div>
-                        <div data-name="icon">
-                            <div class="rounded bg-primary">
-                                <h1 class="px-2 m-0 text-white text-center text-regular">A</h1>
+                        <!-- First letter avatar -->
+                        <div class="rounded bg-primary avatar" id="adminAvatar">
+                            <h1 class="px-2 m-0 text-white text-center text-regular d-none">A</h1>
+                            <div class="p-3 spinner d-flex align-items-center">
+                                <span class="spinner-border spinner-border-sm text-light text-center"></span>
                             </div>
                         </div>
                     </div>
