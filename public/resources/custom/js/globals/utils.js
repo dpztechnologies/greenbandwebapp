@@ -23,7 +23,7 @@ class Utils {
      * @returns {string|null} - The ID of the form or null if not found.
      */
     static getFormId(form) {
-        return form.getAttribute('id');
+        return (typeof form === 'object') ? form.getAttribute('id') : false;
     }
 
     /**

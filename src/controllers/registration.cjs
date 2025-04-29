@@ -14,14 +14,14 @@ class Registration {
             const adminsTable = 'admins';
             const adminsActivity = 'admins_activity';
             const insertAdmin = await DB.run().insert().into(adminsTable, data)
-            const insertAdminActivity = await DB.run().insert().into(adminsActivity, { 'aid': data.aid })
+            const insertAdminActivity = await DB.run().insert().into(adminsActivity, { 'aid': data.aid, 'can_access': 0 })
 
             if (!insertAdminActivity) {
                 return { success: false, message: `Failed to insert admins activity log in ${adminsActivity}` };
             }
 
             if (!insertAdmin) {
-                return { success: false, message: `Failed to insert admins data in ${adminsActivity}` };
+                return { success: false, message: `Failed to insert admins data in ${adminsTable}` };
             }
 
             return { success: true, message: 'Account has been created successfully' };
