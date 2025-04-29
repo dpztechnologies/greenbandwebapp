@@ -46,7 +46,7 @@ const FilePaths = {
     login: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'login.html'),
     home: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'home.html'),
     register: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'register.html'),
-    'super-admin/admins': Path.getFile(RootDir, 'public', 'views', 'pages', 'super-admin', 'admins.html')
+    'super-admin/admins': Path.getFile(RootDir, 'public', 'views', 'pages', 'spadmin', 'admins.html')
 }
 
 

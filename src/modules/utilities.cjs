@@ -115,6 +115,20 @@ class Utilities {
         return newObject;
     }
 
+
+    static sendResults(query, res) {
+        const results = query.getResults();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+        return;
+    }
+
+    static sendErrors(error, res) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: error.message }));
+        return;
+    }
+
 }
 
 

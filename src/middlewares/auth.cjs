@@ -4,6 +4,8 @@ const DB = require('../modules/database.cjs')
 
 const Routes = require('../config/routes.cjs')
 
+const { match } = require('path-to-regexp');
+
 
 class AuthMiddleware extends Auth {
 
@@ -32,8 +34,14 @@ class AuthMiddleware extends Auth {
         const role = roles[0].role;
         const allowedRoutes = Routes[role];
 
-        if (!allowedRoutes || !Object.values(allowedRoutes).includes(req.url)) {
-            return AuthMiddleware.#reject(res, 'Access to invalid route');
+        const isAllowed = Object.values(allowedRoutes).some(routePattern => {
+            const matcher = match(routePattern, { decode: decodeURIComponent });
+            console.log(matcher(req.url));
+            return matcher(req.url) !== false;
+        });
+
+        if (!isAllowed) {
+            return AuthMiddleware.#reject(res, `Access to invalid route ${req.url}`);
         }
 
         next();
@@ -45,8 +53,8 @@ class AuthMiddleware extends Auth {
      * @param {ServerResponse} res - The HTTP response object.
      */
     static #reject(res, msg) {
-        res.writeHead(403, { 'Content-Type': 'text/html' });
-        res.end(`<h1 style='text-align:center; padding:5rem'>${msg}</h1>`);
+        res.writeHead(403, { 'Content-Type': 'text/json' });
+        res.end(`${msg}`);
         return this;
     }
 

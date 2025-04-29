@@ -15,7 +15,7 @@ class LogoutMiddleware {
             });
 
             res.end(JSON.stringify({
-                message: 'Logout request was successful, you will be redirected shortly'
+                message: 'Logout request successful, you will be redirected shortly'
             }));
         } catch (error) {
             res.writeHead(500, { 'Content-Type': 'application/json' });

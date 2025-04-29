@@ -40,7 +40,10 @@ async function postData(form, options, successHandler) {
             return Utils.handleFormErrors(error);
         }
     } catch (err) {
-        console.error(err);
+        Utils.getError('Something unexpected happened while processing your request', err, () => {
+            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+        })
+        return;
     }
 }
 

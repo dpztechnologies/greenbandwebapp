@@ -32,7 +32,7 @@ class Database {
      */
     constructor() {
         this.#conn = mysql.createPool({
-            connectionLimit: 100,
+            connectionLimit: 200,
             host: process.env.DBHOST,
             user: process.env.DBUSER,
             password: process.env.DBPASSWORD,

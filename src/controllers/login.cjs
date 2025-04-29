@@ -32,7 +32,7 @@ class Login {
                     'Content-Type': 'application/json'
                 })
                 const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email')
-                res.end(JSON.stringify({ success: true, message: 'Login was successful', redirect: redirectUrl }))
+                res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectUrl }))
             }
             return;
         } catch (err) {

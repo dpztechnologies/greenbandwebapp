@@ -1,51 +1,4 @@
-import Utils from './utils.js';
-
-
-document.addEventListener('DOMContentLoaded', async () => {
-
-    /**
-     * Admins profile
-     */
-
-    await Utils.getData({
-        endpoint: 'view-admin',
-        beforeSend: RenderAdminProfile.beforeSend,
-        success: RenderAdminProfile.success,
-        fail: RenderAdminProfile.fail,
-        handler: RenderAdminProfile.display,
-    })
-
-    /**
-     * Admins Table
-     */
-    await Utils.getData({
-        endpoint: 'view-admins',
-        beforeSend: RenderAdminsTable.beforeSend,
-        success: RenderAdminsTable.success,
-        fail: RenderAdminsTable.fail,
-        handler: RenderAdminsTable.display
-    });
-
-    processLogout();
-})
-
-
-function processLogout() {
-    const logoutHandler = document.getElementById('logoutController')
-    logoutHandler.onclick = async () => {
-        await Utils.processLogout('/login');
-    }
-    return;
-}
-
-
-function getError(message, error, callback) {
-    Utils.displayToastMessage("#alert-toast",
-        `${message}. Error: ${error}`,
-        "bg-danger",
-        (typeof callback === 'function') ? callback() : () => { return false }
-    )
-}
+import Utils from '../globals/utils.js';
 
 
 class RenderAdminsTable {
@@ -61,13 +14,14 @@ class RenderAdminsTable {
     static display(data) {
         const render = document.querySelector(RenderAdminsTable.#target);
         if (!render) throw new Error(`Invalid target ${RenderAdminsTable.#target}`);
-
+        let count = 1;
         const rows = data.map(item => {
             const statusClass = item.status === 'Online' ? 'bg-success' : 'bg-secondary';
             const isChecked = item.can_access === 1 ? 'checked' : '';
 
             return `
             <tr>
+                <td>${count++}</td>
                 <td>${item.firstname} ${item.lastname}</td>
                 <td class="d-none d-sm-table-cell">${item.email}</td>
                 <td class="d-none d-md-table-cell">
@@ -132,7 +86,7 @@ class RenderAdminsTable {
     }
 
     static fail(error) {
-        getError('Something unexpected happened while loading the admins table', error, () => {
+        Utils.getError('Something unexpected happened while loading the admins table', error, () => {
             Utils.displaySpinner(false, RenderAdminsTable.#spinner);
         })
     }
@@ -179,14 +133,11 @@ class RenderAdminProfile {
     }
 
     static fail(error) {
-        getError('Something unexpected happened while loading admins admins profile', error);
+        Utils.getError('Something unexpected happened while loading admins admins profile', error);
     }
 
 
 }
 
 
-
-
-
-
+export { RenderAdminProfile, RenderAdminsTable }

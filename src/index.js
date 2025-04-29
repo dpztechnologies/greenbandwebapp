@@ -59,15 +59,12 @@ app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
 
 
 
-app.get('/view-admins', [Auth.authenticate], async (req, res) => {
+app.get('/view-admins/:limit', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
     try {
-        const query = await Query.viewAdmins(5);
-        const results = query.getResults();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(results));
+        const query = await Query.viewAdmins(req.params.limit);
+        return utilities.sendResults(query, res);
     } catch (error) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: error.message }));
+        return utilities.sendErrors(error, res);
     }
 });
 
@@ -75,13 +72,9 @@ app.get('/view-admin', [Auth.authenticate], async (req, res) => {
     try {
         const email = await Auth.getEmailFromSession(req, res);
         const query = await Query.viewAdmin(email, ['admins.firstname', 'admins.role'])
-        const results = query.getResults();
-        console.log(results);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(results));
+        return utilities.sendResults(query, res);
     } catch (error) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: error.message }));
+        return utilities.sendErrors(error, res);
     }
 })
 

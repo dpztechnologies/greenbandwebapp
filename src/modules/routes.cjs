@@ -6,6 +6,7 @@ const url = require('url');
 const { MimeTypes, StaticFilePath } = require('../config/constants.cjs')
 const querystring = require('querystring');
 const Busboy = require('busboy');
+const { pathToRegexp, match } = require('path-to-regexp');
 
 
 /**
@@ -16,7 +17,7 @@ const Busboy = require('busboy');
 class RouteResolver {
 
   constructor() {
-    this.routes = {};
+    this.routes = [];
     this.globalMiddlewares = [];
   }
 
@@ -63,11 +64,53 @@ class RouteResolver {
   */
 
   _addRoute(method, path, middlewares = [], handler) {
-    if (!this.routes[path]) {
-      this.routes[path] = {}
-    }
-    this.routes[path][method.toLowerCase()] = { handler, middlewares }
+    const keys = [];
+    const regexp = pathToRegexp(path, keys);
+    this.routes.push({
+      method: method.toLowerCase(),
+      path,
+      regexp,
+      keys,
+      middlewares,
+      handler
+    })
   }
+
+
+  /**
+   * Handles errors that occur during request processing.
+   * 
+   * This static method provides a centralized mechanism for error handling.
+   * It logs the error to the server console and sends a structured JSON response
+   * to the client containing the error message and, optionally, the stack trace.
+   * 
+   * The stack trace is included only when the environment is set to `development`
+   * to avoid exposing sensitive information in production.
+   * 
+   * @param {Error} err - The error object that was thrown during execution.
+   * @param {http.IncomingMessage} req - The incoming request object.
+   * @param {http.ServerResponse} res - The outgoing response object used to send the error response.
+   * 
+   * @example
+   * // Usage inside a middleware or route handler
+   * try {
+   *   throw new Error("Something went wrong");
+   * } catch (err) {
+   *   RouteResolver.handleError(err, req, res);
+   * }
+   */
+  static handleError(err, req, res) {
+    console.error('Error:', err); // Log error details for debugging
+    res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      error: {
+        message: err.message || 'Internal Server Error',
+        stack: process.env.ENV === 'development' ? err.stack : undefined
+      }
+    }));
+  }
+
+
 
   /**
   * Registers a new GET route with the specified path, middleware functions, and handler.
@@ -136,37 +179,55 @@ class RouteResolver {
     const urlPath = parsedURL.pathname;
     const method = req.method.toLowerCase();
     const extname = path.extname(urlPath).toLowerCase();
+
+    // Serve static file if extension matches
     if (Object.keys(MimeTypes).includes(extname)) {
       await this.serveStaticFile(urlPath, res);
       return;
     }
 
+    // Parse POST body
     if (method === 'post') {
       await this.parseBody(req, res);
     }
 
-    const route = this.routes[urlPath]?.[method];
+    // Route matching with path-to-regexp
+    const matchedRoute = this.routes.find(route => {
+      const matcher = match(route.path, { decode: decodeURIComponent });
+      const matched = matcher(urlPath);
+      if (matched) {
+        route._matched = matched;
+        return route.method === method;
+      }
+      return false;
+    });
 
+    if (matchedRoute) {
+      req.params = matchedRoute._matched.params || {};
 
-    if (route) {
-      const routeMiddlewares = route.middlewares || [];
-      const handler = route.handler;
-      const allMiddlewares = [...this.globalMiddlewares, ...routeMiddlewares]
+      const allMiddlewares = [...this.globalMiddlewares, ...matchedRoute.middlewares];
       let i = 0;
 
       const next = () => {
-        const middleware = allMiddlewares[i++]
-        if (middleware) {
-          middleware(req, res, next);
-        } else {
-          handler(req, res)
+        try {
+          const middleware = allMiddlewares[i++];
+          if (middleware) {
+            middleware(req, res, next);
+          } else {
+            matchedRoute.handler(req, res);
+          }
+        } catch (err) {
+          RouteResolver.handleError(err, req, res);
         }
-      }
-      next()
+      };
+
+      next();
       return;
     }
+
+    // No route matched
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Invalid route / method' }))
+    res.end(JSON.stringify({ message: 'Invalid route / method' }));
   }
 
   /**

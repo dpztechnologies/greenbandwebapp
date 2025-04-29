@@ -115,14 +115,16 @@ class Utils {
     static displayToastMessage(selector, message, color, ev) {
         try {
             const toast = document.querySelector(selector);
-            toast.classList.add(color);
+            const removeList = ['bg-success', 'bg-danger', 'bg-info', 'bg-primary', 'bg-light'];
+            Utils.classListActions('remove', removeList, selector);
+            Utils.classListActions('add', [color], selector);
             const toastBody = document.querySelector(`${selector} .toast-body`);
             toastBody.innerHTML = message;
             const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
             toastBootstrap.show();
             setTimeout(() => {
                 toastBootstrap.hide();
-                ev();
+                Utils.executeCallback(ev)
             }, 3000)
             return;
         } catch (err) {
@@ -319,6 +321,15 @@ class Utils {
 
     }
 
+
+    static logout(selector) {
+        const logoutHandler = document.getElementById(selector)
+        logoutHandler.onclick = async () => {
+            await Utils.processLogout('/login');
+        }
+        return;
+    }
+
     static displaySpinner(display = false, selector) {
         switch (display) {
             case true:
@@ -333,7 +344,7 @@ class Utils {
     static async getData(handlers = { endpoint, beforeSend, success, fail, handler }) {
         handlers.beforeSend();
         try {
-            const res = await fetch(Utils.getEndpoint(handlers.endpoint));
+            const res = await fetch(handlers.endpoint);
             if (res.ok) {
                 return await handlers.success(res, handlers.handler);
             } else {
@@ -342,6 +353,18 @@ class Utils {
         } catch (err) {
             handlers.fail(err);
         }
+    }
+
+    static getError(message, error, callback) {
+        Utils.displayToastMessage("#alert-toast",
+            `${message}. Error: ${error}`,
+            "bg-danger",
+            Utils.executeCallback(callback)
+        )
+    }
+
+    static executeCallback(callback) {
+        return (typeof callback === 'function') ? callback() : () => { return false }
     }
 
 }
