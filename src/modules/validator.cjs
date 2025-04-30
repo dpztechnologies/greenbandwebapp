@@ -208,7 +208,7 @@ class Validator {
             this.errors.push({ message: `You must provide an ${ref}`, handler: `${field}` });
             return false;
         }
-        let storedPassword = await DB.reset().select(['password']).from(refTable).where([refColumn, '=', data[ref]]).query();
+        let storedPassword = await DB.run().select(['password']).from(refTable).where([refColumn, '=', data[ref]]).query();
         storedPassword = await storedPassword.getResults();
         if (!storedPassword.length) {
             this.errors.push({ message: `${field} is invalid`, handler: `${field}` });

@@ -5,7 +5,7 @@ const DB = require('../modules/database.cjs');
 class Queries {
 
     static async viewAdmins(limit = 10, fields = []) {
-        return await DB.reset()
+        return await DB.run()
             .select((fields.length > 0) ? fields : ['*'])
             .from('admins')
             .join('INNER JOIN', 'admins_activity')
@@ -16,7 +16,7 @@ class Queries {
     }
 
     static async viewAdmin(email, fields = []) {
-        return await DB.reset()
+        return await DB.run()
             .select((fields.length > 0) ? fields : ['*'])
             .from('admins')
             .join('INNER JOIN', 'admins_activity')

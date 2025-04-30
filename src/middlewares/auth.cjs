@@ -22,7 +22,7 @@ class AuthMiddleware extends Auth {
    */
     static async authenticate(req, res, next) {
         const email = await AuthMiddleware.getEmailFromSession(req, res)
-        const result = await DB.reset()
+        const result = await DB.run()
             .select(['role'])
             .from('admins')
             .where(['email', '=', email])

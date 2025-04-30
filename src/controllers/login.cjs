@@ -42,12 +42,12 @@ class Login {
     }
 
     static async updateStatus(email) {
-        const query = await DB.reset().select(['aid']).from('admins').where(['email', '=', email]).query();
+        const query = await DB.run().select(['aid']).from('admins').where(['email', '=', email]).query();
         const results = query.getResults();
         if (!Array.isArray(results) || results.length === 0) return false;
 
         const aid = results[0].aid;
-        const update = await DB.reset()
+        const update = await DB.run()
             .update('admins_activity')
             .set({ status: 'Online' })
             .where(['aid', '=', aid])
@@ -59,7 +59,7 @@ class Login {
 
 
     static async #redirectBasedOnRole(data, column) {
-        const result = await DB.reset().select(['role']).from('admins').where([column, '=', data]).query();
+        const result = await DB.run().select(['role']).from('admins').where([column, '=', data]).query();
         const role = (result.getResults().length > 0) ? result.getResults()[0].role : false;
         if (!role) throw new Error('Failed to resolve admin roles');
         if (Object.hasOwnProperty.call(Routes, role)) {

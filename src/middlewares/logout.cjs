@@ -9,7 +9,7 @@ class LogoutMiddleware {
         try {
 
             const email = await Auth.getEmailFromSession(req, res)
-            const query = await DB.reset()
+            const query = await DB.run()
                 .update('admins_activity')
                 .join('JOIN', 'admins')
                 .on('admins_activity.aid', 'admins.aid')

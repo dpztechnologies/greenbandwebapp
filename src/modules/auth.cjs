@@ -131,7 +131,7 @@ class Auth {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
         if (!sessionId) return null;
-        const session = await DB.reset().select(['*']).from('sessions').where(['id', '=', sessionId]).and(['expires_at', '>', 'NOW()']).query();
+        const session = await DB.run().select(['*']).from('sessions').where(['id', '=', sessionId]).and(['expires_at', '>', 'NOW()']).query();
         return session.getResults();
     }
 

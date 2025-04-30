@@ -75,6 +75,9 @@ class Database {
             err.query = sql;
             err.params = params;
             throw err;
+        } finally {
+            this.#sql = '';
+            this.#params = [];
         }
     }
 
@@ -298,21 +301,38 @@ class Database {
     }
 
 
+    /**
+ * Appends a LIMIT clause to the SQL query.
+ *
+ * @param {number} count - The maximum number of rows to return.
+ * @returns {this} The current query builder instance for chaining.
+ */
     limit(count) {
-        this.#sql += ` LIMIT ${count}`
+        this.#sql += ` LIMIT ${count}`;
         return this;
     }
 
-
+    /**
+     * Appends an ORDER BY clause to the SQL query.
+     *
+     * @param {string} field - The field to order the results by.
+     * @param {string} order - The order direction ('ASC' or 'DESC').
+     * @returns {this} The current query builder instance for chaining.
+     */
     orderby(field, order) {
-        this.#sql += ` ORDER BY ${field} ${order}`
+        this.#sql += ` ORDER BY ${field} ${order}`;
         return this;
     }
 
-
+    /**
+     * Retrieves the current SQL query and its parameters.
+     *
+     * @returns {{ sql: string, params: any[] }} An object containing the SQL string and associated parameters.
+     */
     getSQL() {
         return { sql: this.#sql, params: this.#params };
     }
+
 
 
     /**
@@ -327,10 +347,6 @@ class Database {
         return this.instance;
     }
 
-    static reset() {
-        this.instance = new this();
-        return this.instance;
-    }
 }
 
 
