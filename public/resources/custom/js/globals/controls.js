@@ -4,8 +4,9 @@ function toggleSidebar(selector) {
     const triggers = document.querySelectorAll(selector);
     triggers.forEach(trigger => {
         trigger.onclick = (e) => {
-            console.log('true')
-            return Utils.classListActions('toggle', ['d-none'], '#sidebar')
+            Utils.classListActions('toggle', ['show'], '#sidebar')
+            Utils.classListActions('toggle', ['show'], '.sidebar-backdrop')
+            return;
         }
     })
 }

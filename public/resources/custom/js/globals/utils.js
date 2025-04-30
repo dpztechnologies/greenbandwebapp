@@ -316,7 +316,7 @@ class Utils {
                 })
             }
         } catch (err) {
-            console.error(err)
+            Utils.getError("Something unexpected happened", err);
         }
 
     }

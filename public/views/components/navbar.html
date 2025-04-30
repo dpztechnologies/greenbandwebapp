@@ -1,0 +1,48 @@
+<nav class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center ms-xl-5 mt-2 mt-md-0">
+        <a class="sidebarController" href="javascript:void(0)"><svg data-target="#sidebar" width="30" height="31"
+                viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M25 6.75H10M25 15.5H5M25 24.25H15" stroke="#76009F" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg></a>
+        <h1 class="my-3 ms-1 m-md-0 ms-md-3">System Admins</h1>
+    </div>
+    <!-- Navbar dropdown -->
+    <div class="me-md-2 dropdown" id="dropdownMenuButton" data-bs-toggle="dropdown">
+        <div class="d-flex justify-content-start align-items-center mt-2">
+            <div id="adminDetails" class="me-3 d-none d-md-flex align-items-end flex-column">
+                <h3 class="text-nowrap text-medium m-0 firstname">Loading...</h3>
+                <small class="text-nowrap text-secondary role d-none">Super Admin</small>
+            </div>
+            <!-- First letter avatar -->
+            <div class="rounded bg-primary avatar" id="adminAvatar">
+                <h1 class="px-2 m-0 text-white text-center text-regular d-none">A</h1>
+                <div class="p-3 spinner d-flex align-items-center">
+                    <span class="spinner-border spinner-border-sm text-light text-center"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Dropdown menu -->
+        <ul class="dropdown-menu py-3 mt-2 shadow border-0" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item d-flex align-items-center p-2 px-3" href="#">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12.6667 14V12.6667C12.6667 11.9594 12.3858 11.2811 11.8857 10.781C11.3856 10.281 10.7073 10 10 10H6.00004C5.2928 10 4.61452 10.281 4.11442 10.781C3.61433 11.2811 3.33337 11.9594 3.33337 12.6667V14"
+                            stroke="#76009F" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M8.00004 7.33333C9.4728 7.33333 10.6667 6.13943 10.6667 4.66667C10.6667 3.19391 9.4728 2 8.00004 2C6.52728 2 5.33337 3.19391 5.33337 4.66667C5.33337 6.13943 6.52728 7.33333 8.00004 7.33333Z"
+                            stroke="#76009F" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="ms-2">Profile</span>
+                </a></li>
+            <li><a class="dropdown-item d-flex align-items-center p-2 px-3" id="logoutController" href="#">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M11.3334 4.66667L10.3934 5.60667L12.1134 7.33333H5.33337V8.66667H12.1134L10.3934 10.3867L11.3334 11.3333L14.6667 8M2.66671 3.33333H8.00004V2H2.66671C1.93337 2 1.33337 2.6 1.33337 3.33333V12.6667C1.33337 13.4 1.93337 14 2.66671 14H8.00004V12.6667H2.66671V3.33333Z"
+                            fill="#F72B50" />
+                    </svg>
+                    <span class="ms-2">Log out</span>
+                </a></li>
+        </ul>
+    </div>
+</nav>

@@ -1,6 +1,5 @@
 import Utils from '../globals/utils.js';
 
-
 class RenderAdminsTable {
 
     static #spinner = '#tableLazyLoading';
@@ -12,18 +11,37 @@ class RenderAdminsTable {
     }
 
     static display(data) {
-        const render = document.querySelector(RenderAdminsTable.#target);
-        if (!render) throw new Error(`Invalid target ${RenderAdminsTable.#target}`);
+        const target = document.querySelector(RenderAdminsTable.#target);
+        if (!target) throw new Error(`Invalid target ${RenderAdminsTable.#target}`);
+
+        // Start fade-out
+        target.style.transition = 'opacity 300ms ease';
+        target.style.opacity = 0;
+
+        // Wait for fade-out to complete, then render data and fade in
+        RenderAdminsTable.tableAnimation(300, () => {
+            RenderAdminsTable.#renderData(target, data);
+            target.style.opacity = 1;
+        });
+    }
+
+
+
+    static #renderData(target, data) {
         let count = 1;
         const rows = data.map(item => {
             const statusClass = item.status === 'Online' ? 'bg-success' : 'bg-secondary';
             const isChecked = item.can_access === 1 ? 'checked' : '';
-
+            const roleBadge = `
+                <span class="badge ${item.role === 'System Admin' ? 'bg-primary' : 'bg-success'}">
+                    ${item.role === 'System Admin' ? 'SY' : 'SP'}
+                </span>`;
             return `
             <tr>
                 <td>${count++}</td>
                 <td>${item.firstname} ${item.lastname}</td>
                 <td class="d-none d-sm-table-cell">${item.email}</td>
+                <td class="d-none d-md-table-cell">${roleBadge}</td>
                 <td class="d-none d-md-table-cell">
                     <div class="d-flex align-items-center">
                         ${item.status}
@@ -75,7 +93,12 @@ class RenderAdminsTable {
         `;
         });
 
-        render.innerHTML = rows.join('');
+        target.innerHTML = rows.join('');
+    }
+
+
+    static tableAnimation(duration, callback) {
+        setTimeout(Utils.executeCallback(callback), duration)
     }
 
     static async success(res, handler) {

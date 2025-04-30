@@ -12,217 +12,22 @@
 
 <body>
     <!-- Toast -->
-    <div id="toast-wrapper"
-        class="position-fixed top-0 start-50 translate-middle-x translate-md-none start-md-auto end-md-0 p-3"
-        style="z-index: 9999;">
-        <div id="alert-toast" class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true"
-            data-bs-delay="3000" data-bs-autohide="true">
-            <div class="toast-body text-center p-3">
-                Hello, world! This is a toast message.
-            </div>
-        </div>
-    </div>
+    @include("public/views/components/toast.html")
 
 
     <!-- Modal -->
-    <div class="modal fade" id="adminRegistrationForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header align-items-center justify-content-between py-4 px-3">
-                    <h5 class="text-start text-semibold m-0 text-nowrap">Admin Registration Form</h5>
-                    <a href="#" role="button" data-bs-dismiss="modal"
-                        class="d-flex align-items-center text-decoration-none text-secondary">
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M8.00003 8.93385L4.73337 12.2005C4.61114 12.3227 4.45559 12.3839 4.2667 12.3839C4.07781 12.3839 3.92225 12.3227 3.80003 12.2005C3.67781 12.0783 3.6167 11.9227 3.6167 11.7339C3.6167 11.545 3.67781 11.3894 3.80003 11.2672L7.0667 8.00052L3.80003 4.73385C3.67781 4.61163 3.6167 4.45608 3.6167 4.26719C3.6167 4.0783 3.67781 3.92274 3.80003 3.80052C3.92225 3.6783 4.07781 3.61719 4.2667 3.61719C4.45559 3.61719 4.61114 3.6783 4.73337 3.80052L8.00003 7.06719L11.2667 3.80052C11.3889 3.6783 11.5445 3.61719 11.7334 3.61719C11.9223 3.61719 12.0778 3.6783 12.2 3.80052C12.3223 3.92274 12.3834 4.0783 12.3834 4.26719C12.3834 4.45608 12.3223 4.61163 12.2 4.73385L8.93337 8.00052L12.2 11.2672C12.3223 11.3894 12.3834 11.545 12.3834 11.7339C12.3834 11.9227 12.3223 12.0783 12.2 12.2005C12.0778 12.3227 11.9223 12.3839 11.7334 12.3839C11.5445 12.3839 11.3889 12.3227 11.2667 12.2005L8.00003 8.93385Z"
-                                fill="#7F7184" />
-                        </svg>
-                    </a>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" class="py-3" id="admin-registration" data-label="registration"
-                        enctype="multipart/form-data" class="needs-validation mt-3 mt-lg-0" novalidate>
-                        <div class="row g-3 mx-0">
-                            <div class="col-lg-6 form-group my-3">
-                                <input type="text" class="form-control py-3" name="firstname" placeholder="Firstname" />
-                                <div class="invalid-feedback mt-2">Firstname is required</div>
-                            </div>
-                            <div class="col-lg-6 form-group my-3">
-                                <input type="text" class="form-control py-3" name="lastname" placeholder="Lastname" />
-                                <div class="invalid-feedback mt-2">Lastname is required</div>
-                            </div>
-                            <div class="col-lg-6 form-group my-3">
-                                <select name="role" class="form-select py-3">
-                                    <option>Super Admin</option>
-                                    <option>System Admin</option>
-                                </select>
-                                <div class="invalid-feedback mt-2">Role is required</div>
-                            </div>
-                            <div class="col-lg-6 form-group my-3">
-                                <input type="text" class="form-control py-3" name="phone-no"
-                                    placeholder="Phone number" />
-                                <div class="invalid-feedback mt-2">Phone number is required</div>
-                            </div>
-                            <div class="col-md-12 form-group my-3">
-                                <input type="email" class="form-control py-3" name="email" placeholder="Email" />
-                                <div class="invalid-feedback mt-2">Email is required</div>
-                            </div>
-
-                            <div class="col-md-12 form-group my-3">
-                                <input type="password" class="form-control py-3" name="password"
-                                    placeholder="Password" />
-                                <div class="invalid-feedback mt-2">Password is required</div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary mt-1 mb-4 p-2 w-100">
-                                    <span class="spinner spinner-border spinner-border-sm d-none"
-                                        aria-hidden="true"></span>
-                                    <span class="button-text">Register Admin</span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @include("public/views/components/modals.html")
 
 
 
 
     <!-- Sidebar -->
-    <section class="d-flex flex-direction-row">
-        <aside class="position-fixed h-100 bg-white d-none d-xl-block" style="z-index: 300;" id="sidebar">
-            <a href="javascript:"
-                class="sidebarController d-flex d-xl-none justify-content-end align-items-center ms-3 p-2 mt-2">
-                <svg width="24" height="24" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M8.00003 8.93337L4.73337 12.2C4.61114 12.3223 4.45559 12.3834 4.2667 12.3834C4.07781 12.3834 3.92225 12.3223 3.80003 12.2C3.67781 12.0778 3.6167 11.9223 3.6167 11.7334C3.6167 11.5445 3.67781 11.3889 3.80003 11.2667L7.0667 8.00003L3.80003 4.73337C3.67781 4.61114 3.6167 4.45559 3.6167 4.2667C3.6167 4.07781 3.67781 3.92225 3.80003 3.80003C3.92225 3.67781 4.07781 3.6167 4.2667 3.6167C4.45559 3.6167 4.61114 3.67781 4.73337 3.80003L8.00003 7.0667L11.2667 3.80003C11.3889 3.67781 11.5445 3.6167 11.7334 3.6167C11.9223 3.6167 12.0778 3.67781 12.2 3.80003C12.3223 3.92225 12.3834 4.07781 12.3834 4.2667C12.3834 4.45559 12.3223 4.61114 12.2 4.73337L8.93337 8.00003L12.2 11.2667C12.3223 11.3889 12.3834 11.5445 12.3834 11.7334C12.3834 11.9223 12.3223 12.0778 12.2 12.2C12.0778 12.3223 11.9223 12.3834 11.7334 12.3834C11.5445 12.3834 11.3889 12.3223 11.2667 12.2L8.00003 8.93337Z"
-                        fill="#7F7184" />
-                </svg>
-            </a>
-            <main class="px-4 p-md-4">
-                <div class="d-flex justify-content-start align-items-center mt-2">
-                    <div data-name="icon">
-                        <div class="rounded bg-primary avatar">
-                            <h1 class="text-white text-center text-regular">G</h1>
-                        </div>
-                    </div>
-                    <div data-name="heading">
-                        <h3 class="text-nowrap text-medium ms-3 p-0">Greenband Web App</h3>
-                    </div>
-                </div>
-
-                <div class="mt-5">
-                    <a href="/super-admin/admins"
-                        class="d-flex justify-content-between align-items-center text-decoration-none text-secondary">
-                        <div class="d-flex align-items-center">
-                            <svg width="16" height="17" viewBox="0 0 16 17" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_495_3577" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1"
-                                    y="1" width="14" height="15">
-                                    <path
-                                        d="M7.3335 9.16562L10.4935 4.16562C10.6868 4.27895 10.8735 4.39895 11.0468 4.53229L12.7268 3.85895C12.8335 3.81895 13.0135 3.83895 13.0668 3.94562L14.4468 6.33229C14.5135 6.44562 14.4868 6.63229 14.4002 6.71229L12.9535 7.83229C12.9868 8.05229 13.0002 8.27229 13.0002 8.49895L7.3335 9.16562Z"
-                                        fill="white" />
-                                    <path
-                                        d="M7.0894 8.25468L12.9995 8.49132C12.998 8.71542 12.9875 8.93708 12.9587 9.15386L14.3818 10.2721C14.4698 10.3445 14.5424 10.5104 14.4767 10.6099L13.0998 12.9983C13.035 13.1127 12.86 13.183 12.7474 13.1479L11.0541 12.4551C10.8802 12.5939 10.6964 12.7155 10.5001 12.8288L7.0894 8.25468Z"
-                                        fill="white" />
-                                    <path
-                                        d="M7.75615 7.58907L10.5063 12.8257C10.3115 12.9365 10.1142 13.0381 9.91207 13.1216L9.65519 14.9132C9.6365 15.0255 9.52918 15.1714 9.41014 15.1643L6.65322 15.1661C6.52174 15.1671 6.37342 15.0507 6.34747 14.9356L6.10085 13.1228C5.89366 13.0417 5.69647 12.9432 5.50017 12.8299L7.75615 7.58907Z"
-                                        fill="white" />
-                                    <path
-                                        d="M8.66675 7.83243L5.50675 12.8324C5.31341 12.7191 5.12675 12.5991 4.95341 12.4658L3.27341 13.1391C3.16675 13.1791 2.98675 13.1591 2.93341 13.0524L1.55341 10.6658C1.48675 10.5524 1.51341 10.3658 1.60008 10.2858L3.04675 9.16576C3.01341 8.94576 3.00008 8.72576 3.00008 8.49909L8.66675 7.83243Z"
-                                        fill="white" />
-                                    <path
-                                        d="M8.91084 8.74336L3.00071 8.50672C3.0022 8.28262 3.01279 8.06097 3.04159 7.84419L1.61847 6.72593C1.53049 6.65356 1.45781 6.48767 1.52352 6.38815L2.90043 3.9997C2.96525 3.8853 3.14024 3.81506 3.25286 3.85012L4.94614 4.54297C5.12 4.4041 5.30386 4.28255 5.50016 4.16922L8.91084 8.74336Z"
-                                        fill="white" />
-                                    <path
-                                        d="M8.24409 9.41093L5.49397 4.17429C5.68878 4.06353 5.88604 3.96187 6.08817 3.87843L6.34505 2.08684C6.36374 1.97446 6.47106 1.82858 6.59011 1.83572L9.34702 1.83394C9.4785 1.83287 9.62683 1.9493 9.65278 2.06435L9.89939 3.8772C10.1066 3.95834 10.3038 4.05679 10.5001 4.17012L8.24409 9.41093Z"
-                                        fill="white" />
-                                    <path
-                                        d="M8.00008 10.8327C9.28875 10.8327 10.3334 9.78801 10.3334 8.49935C10.3334 7.21068 9.28875 6.16602 8.00008 6.16602C6.71142 6.16602 5.66675 7.21068 5.66675 8.49935C5.66675 9.78801 6.71142 10.8327 8.00008 10.8327Z"
-                                        fill="black" />
-                                </mask>
-                                <g mask="url(#mask0_495_3577)">
-                                    <path d="M16 0.5H0V16.5H16V0.5Z" fill="#7F7184" />
-                                </g>
-                            </svg>
-
-                            <span class="ms-3">System Admins</span>
-
-                        </div>
-
-
-                        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M5.99128 3.38052L11.2891 8.50052L5.99128 13.6205C5.84689 13.7596 5.65315 13.8356 5.4527 13.8319C5.25224 13.8281 5.06149 13.7449 4.9224 13.6005C4.78331 13.4561 4.70727 13.2624 4.71102 13.0619C4.71477 12.8615 4.798 12.6707 4.9424 12.5316L9.11573 8.50052L4.9424 4.46497C4.798 4.32588 4.71477 4.13512 4.71102 3.93467C4.70727 3.73421 4.78331 3.54048 4.9224 3.39608C5.06149 3.25168 5.25224 3.16846 5.4527 3.16471C5.65315 3.16096 5.84689 3.23699 5.99128 3.37608V3.38052Z"
-                                fill="#7F7184" />
-                        </svg>
-                    </a>
-                </div>
-            </main>
-        </aside>
-    </section>
-
+    @include("public/views/components/sidebar.html")
     <!-- Main content -->
     <main class="container-fluid d-flex justify-content-xl-end">
         <section class="col-xl-10 col-12 p-md-3 py-md-4 px-md-0 mt-md-1">
             <!-- Navbar -->
-            <nav class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center ms-xl-5 mt-2 mt-md-0">
-                    <a class="sidebarController" href="javascript:void(0)"><svg data-target="#sidebar" width="30"
-                            height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M25 6.75H10M25 15.5H5M25 24.25H15" stroke="#76009F" stroke-width="1.5"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg></a>
-                    <h1 class="my-3 ms-1 m-md-0 ms-md-3">System Admins</h1>
-                </div>
-                <!-- Navbar dropdown -->
-                <div class="me-md-2 dropdown" id="dropdownMenuButton" data-bs-toggle="dropdown">
-                    <div class="d-flex justify-content-start align-items-center mt-2">
-                        <div id="adminDetails" class="me-3 d-none d-md-flex align-items-end flex-column">
-                            <h3 class="text-nowrap text-medium m-0 firstname">Loading...</h3>
-                            <small class="text-nowrap text-secondary role d-none">Super Admin</small>
-                        </div>
-                        <!-- First letter avatar -->
-                        <div class="rounded bg-primary avatar" id="adminAvatar">
-                            <h1 class="px-2 m-0 text-white text-center text-regular d-none">A</h1>
-                            <div class="p-3 spinner d-flex align-items-center">
-                                <span class="spinner-border spinner-border-sm text-light text-center"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Dropdown menu -->
-                    <ul class="dropdown-menu py-3 mt-2 shadow border-0" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item d-flex align-items-center p-2 px-3" href="#">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12.6667 14V12.6667C12.6667 11.9594 12.3858 11.2811 11.8857 10.781C11.3856 10.281 10.7073 10 10 10H6.00004C5.2928 10 4.61452 10.281 4.11442 10.781C3.61433 11.2811 3.33337 11.9594 3.33337 12.6667V14"
-                                        stroke="#76009F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M8.00004 7.33333C9.4728 7.33333 10.6667 6.13943 10.6667 4.66667C10.6667 3.19391 9.4728 2 8.00004 2C6.52728 2 5.33337 3.19391 5.33337 4.66667C5.33337 6.13943 6.52728 7.33333 8.00004 7.33333Z"
-                                        stroke="#76009F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <span class="ms-2">Profile</span>
-                            </a></li>
-                        <li><a class="dropdown-item d-flex align-items-center p-2 px-3" id="logoutController" href="#">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M11.3334 4.66667L10.3934 5.60667L12.1134 7.33333H5.33337V8.66667H12.1134L10.3934 10.3867L11.3334 11.3333L14.6667 8M2.66671 3.33333H8.00004V2H2.66671C1.93337 2 1.33337 2.6 1.33337 3.33333V12.6667C1.33337 13.4 1.93337 14 2.66671 14H8.00004V12.6667H2.66671V3.33333Z"
-                                        fill="#F72B50" />
-                                </svg>
-                                <span class="ms-2">Log out</span>
-                            </a></li>
-                    </ul>
-                </div>
-            </nav>
+            @include("public/views/components/navbar.html")
             <!-- Content -->
             <section class="ms-xl-5 my-4">
                 <!-- Breadcrumb -->
@@ -247,7 +52,7 @@
                                     <input type="text" class="form-control me-3" placeholder="Search">
 
                                     <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal"
-                                        data-bs-target="#adminRegistrationForm">
+                                        data-bs-target="#modal">
                                         <span class="text-nowrap">Add Admin</span>
                                         <svg width="20" height="20" viewBox="0 0 16 16" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -269,6 +74,7 @@
                                         <th class="text-nowrap">#</th>
                                         <th class="text-nowrap">Name</th>
                                         <th class="text-nowrap d-none d-sm-table-cell">Email</th>
+                                        <th class="text-nowrap d-none d-md-table-cell">Role</th>
                                         <th class="text-nowrap d-none d-md-table-cell">Status</th>
                                         <th class="text-nowrap text-center d-none d-md-table-cell">Can Access</th>
                                         <th class="text-nowrap d-flex justify-content-end d-md-table-cell">Actions</th>

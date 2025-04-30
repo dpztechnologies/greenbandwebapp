@@ -36,7 +36,6 @@ class AuthMiddleware extends Auth {
 
         const isAllowed = Object.values(allowedRoutes).some(routePattern => {
             const matcher = match(routePattern, { decode: decodeURIComponent });
-            console.log(matcher(req.url));
             return matcher(req.url) !== false;
         });
 

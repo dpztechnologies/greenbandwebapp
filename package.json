@@ -4,7 +4,7 @@
   "description": "Greenband Web App",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "pm2 start src/index.js",
     "dev": "nodemon src/index.js"
   },
   "author": "",
@@ -17,7 +17,8 @@
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "mysql2": "^3.14.0",
-    "path-to-regexp": "^8.2.0"
+    "path-to-regexp": "^8.2.0",
+    "pm2": "^6.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

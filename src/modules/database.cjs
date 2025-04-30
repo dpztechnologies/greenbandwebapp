@@ -1,8 +1,12 @@
 const mysql = require('mysql2/promise');
 const path = require("path");
-const dotenv = require('dotenv').config({ path: path.resolve("../../.env") });
+const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const Utilities = require('./utilities.cjs')
 
+
+if (dotenv.error) {
+    throw new Error("Failed to load .env file");
+}
 
 /**
  * @author DPZTechnologies
@@ -306,7 +310,7 @@ class Database {
     }
 
 
-    getSql() {
+    getSQL() {
         return { sql: this.#sql, params: this.#params };
     }
 

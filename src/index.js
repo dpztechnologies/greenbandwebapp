@@ -8,6 +8,8 @@ const Login = require("./controllers/login.cjs");
 const { Auth } = require('./middlewares/auth.cjs');
 const Query = require('./controllers/queries.cjs');
 const { Logout } = require("./middlewares/logout.cjs");
+const File = require("./modules/template.cjs");
+const { view } = require('./helpers/functions.cjs');
 
 const app = routeProvider();
 
@@ -48,12 +50,11 @@ app.get("/login", [], (req, res) => {
 
 
 
-app.get('/super-admin/admins', [Auth.authenticate], (req, res,) => {
-    fs.readFile(utilities.getFilePath("super-admin/admins"), (err, data) => {
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.write(data);
-        res.end();
-    });
+app.get('/super-admin/admins', [Auth.authenticate], async (req, res,) => {
+    const html = await view('pages/spadmin/admins.html');
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.write(html);
+    res.end();
 })
 
 
@@ -77,6 +78,14 @@ app.get('/view-admin', [Auth.authenticate], async (req, res) => {
         return utilities.sendErrors(error, res);
     }
 })
+
+
+app.get('/test/render', [], async (req, res) => {
+    const html = await view('pages/spadmin/admins.html');
+    res.writeHead(200, { "Content-Type": "text/html" });
+    res.write(html);
+    res.end();
+});
 
 
 
