@@ -76,12 +76,8 @@ class Auth {
      * @param {string} data.column - The column to match.
      * @returns {Promise<void>}
      */
-    async garbageCollectSession(data = { from: '', column: '' }) {
-        const count = DB.run().count('sessions', [data.column, '=', data.from]);
-        if (count) {
-            await DB.run().delete().from('sessions').where([data.column, '=', data.from]).query()
-            return;
-        }
+    async garbageCollectSession() {
+        await DB.run().delete().from('sessions').where(['expires_at', '>', 'NOW()']).query()
         return;
     }
 
@@ -92,12 +88,27 @@ class Auth {
      * @param {string} data.column - The column name to store `from` under.
      * @returns {Promise<string>} The newly generated session ID.
      */
-    async createSession(data = { from: '', column: '' }) {
-        await this.validateSessionParams(data)
-        await this.garbageCollectSession(data);
+    /**
+   * Creates a new session for the user and stores it in the database.
+   * Generates a unique session token based on the user and device.
+   * @param {Object} data - Session creation data.
+   * @param {string} data.from - The user identifier (e.g., email).
+   * @param {string} data.column - The column name to store the identifier (e.g., 'email').
+   * @param {string} data.userAgent - The User-Agent to create a unique device token.
+   * @returns {Promise<string>} The generated session ID.
+   */
+    async createSession(data = { from: '', column: '', userAgent: '' }) {
+        await this.validateSessionParams(data);
+        const deviceToken = crypto.createHash('sha256').update(data.from + data.userAgent).digest('hex');
         const sessionId = this.generateSessionId();
         const expires = new Date(Date.now() + this.cookieOptions.maxAge);
-        await DB.run().insert().into('sessions', { id: sessionId, [data.column]: data.from, expires_at: expires });
+        await DB.run().insert().into('sessions', {
+            id: sessionId,
+            [data.column]: data.from,
+            expires_at: expires,
+            device_token: deviceToken,
+        });
+
         return sessionId;
     }
 
@@ -109,18 +120,18 @@ class Auth {
      * @throws Will throw an error if validation fails.
      * @returns {Promise<void>}
      */
-    async validateSessionParams(data = { from: '', column: '' }) {
-        const allowedKeys = ['from', 'column'];
-        if (Object.keys(data) > 2) throw new Error(`Data must contain only 2 params from & column`)
+    async validateSessionParams(data = { from: '', column: '', userAgent: '' }) {
+        const allowedKeys = ['from', 'column'];  // These are still required
         Object.keys(data).forEach(key => {
-            if (!allowedKeys.includes(key)) {
-                throw new Error(`Invalid key ${key} data must have only 2 params from & column`);
+            if (!allowedKeys.includes(key) && key !== 'userAgent') { // Allow userAgent as an extra field
+                throw new Error(`Invalid key ${key} data must have only 2 params from & column, and optionally userAgent`);
             }
-        })
+        });
         if (!data.from || !data.column) throw new Error('`from` field and `column` field are required');
-        if (typeof data.from !== 'string' || typeof data.column !== 'string') throw new Error('`from` and `column` must be of type string')
+        if (typeof data.from !== 'string' || typeof data.column !== 'string') throw new Error('`from` and `column` must be of type string');
         return;
     }
+
 
     /**
      * Retrieves a session from the request cookies.
@@ -131,10 +142,21 @@ class Auth {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
         if (!sessionId) return null;
-        const session = await DB.run().select(['*']).from('sessions').where(['id', '=', sessionId]).and(['expires_at', '>', 'NOW()']).query();
+        const userAgent = req.headers['user-agent'];
+
+        const query = await DB.run().select(['email']).from('sessions').where(['id', '=', sessionId]).query()
+        const email = query.getResults()[0].email;
+
+        const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
+        const session = await DB.run()
+            .select(['*'])
+            .from('sessions')
+            .where(['id', '=', sessionId])
+            .and(['device_token', '=', deviceToken])
+            .and(['expires_at', '>', 'NOW()'])
+            .query();
         return session.getResults();
     }
-
     /**
      * Deletes a session from the database using the session ID from cookies.
      * @param {Object} req - The HTTP request object.
@@ -144,7 +166,14 @@ class Auth {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
         if (!sessionId) return;
-        await DB.reset().delete().from('sessions').where(['id', '=', sessionId]).query()
+        const userAgent = req.headers['user-agent'];
+        const deviceToken = crypto.createHash('sha256').update(sessionId + userAgent).digest('hex');
+        await DB.run()
+            .delete()
+            .from('sessions')
+            .where(['id', '=', sessionId])
+            .and(['device_token', '=', deviceToken])
+            .query();
     }
 
     /**

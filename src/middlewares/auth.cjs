@@ -6,6 +6,9 @@ const Routes = require('../config/routes.cjs')
 
 const { match } = require('path-to-regexp');
 
+const crypto = require('crypto')
+
+
 
 class AuthMiddleware extends Auth {
 
@@ -21,30 +24,66 @@ class AuthMiddleware extends Auth {
    * @returns {Promise<boolean|void>} - Returns true if authorized, otherwise ends the response.
    */
     static async authenticate(req, res, next) {
-        const email = await AuthMiddleware.getEmailFromSession(req, res)
-        const result = await DB.run()
-            .select(['role'])
-            .from('admins')
-            .where(['email', '=', email])
-            .query();
+        try {
+            // Get the email from the session
+            const email = await AuthMiddleware.getEmailFromSession(req, res);
 
-        const roles = await result.getResults();
-        if (!roles.length) return AuthMiddleware.#reject(res, 'Role not found');
+            // Extract user agent from the request headers
+            const userAgent = req.headers['user-agent'];
 
-        const role = roles[0].role;
-        const allowedRoutes = Routes[role];
+            const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
 
-        const isAllowed = Object.values(allowedRoutes).some(routePattern => {
-            const matcher = match(routePattern, { decode: decodeURIComponent });
-            return matcher(req.url) !== false;
-        });
+            // Retrieve the session from the database based on email and user-agent
+            const query = await DB.run()
+                .select(['*'])
+                .from('sessions')
+                .where(['email', '=', email])
+                .and(['device_token', '=', deviceToken])  // Ensure the user-agent matches
+                .and(['expires_at', '>', 'NOW()'])   // Ensure the session is not expired
+                .query();
 
-        if (!isAllowed) {
-            return AuthMiddleware.#reject(res, `Access to invalid route ${req.url}`);
+
+            const session = query.getResults();
+
+
+            // If session is not found or expired, reject the request
+            if (!session || !session.length) {
+                return AuthMiddleware.#reject(res, 'Session not valid or expired');
+            }
+
+            // Retrieve the user's role from the database
+            const result = await DB.run()
+                .select(['role'])
+                .from('admins')
+                .where(['email', '=', email])
+                .query();
+
+            const roles = await result.getResults();
+            if (!roles.length) {
+                return AuthMiddleware.#reject(res, 'Role not found');
+            }
+
+            const role = roles[0].role;
+            const allowedRoutes = Routes[role];
+
+            // Check if the user has permission to access the route
+            const isAllowed = Object.values(allowedRoutes).some(routePattern => {
+                const matcher = match(routePattern, { decode: decodeURIComponent });
+                return matcher(req.url) !== false;
+            });
+
+            // If the route is not allowed, reject the request
+            if (!isAllowed) {
+                return AuthMiddleware.#reject(res, `Access to invalid route ${req.url}`);
+            }
+
+            // Proceed to the next middleware if everything is valid
+            next();
+        } catch (err) {
+            console.error(`Something unexpected happened: ${err}`)
         }
-
-        next();
     }
+
 
     /**
      * Sends a 403 Forbidden response and ends the request.
@@ -59,11 +98,30 @@ class AuthMiddleware extends Auth {
 
 
     static async getEmailFromSession(req, res) {
-        const session = await Auth.run().getSessionFromRequest(req);
-        if (!session) return AuthMiddleware.#reject(res, 'Session not established');
-        const email = (typeof session[0] !== 'undefined' && session[0].hasOwnProperty('email')) ? session[0].email : AuthMiddleware.#reject(res, 'Your session has expired');
-        return email;
+        try {
+            const session = await Auth.run().getSessionFromRequest(req);
+            // If no session is found, reject the request
+            if (!session || session.length === 0) {
+                return AuthMiddleware.#reject(res, 'Session not established');
+            }
+            // Check if the session has expired by comparing with the expiration time
+            const expiresAt = session[0].expires_at;
+            if (new Date(expiresAt) < new Date()) {
+                return AuthMiddleware.#reject(res, 'Your session has expired');
+            }
+
+            // If email exists, return it, otherwise reject
+            const email = session[0].email;
+            if (!email) {
+                return AuthMiddleware.#reject(res, 'Your session has expired');
+            }
+
+            return email;
+        } catch (err) {
+            console.error('Error fetching email from session:', err);
+        }
     }
+
 
 }
 

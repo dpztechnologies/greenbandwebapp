@@ -14,32 +14,51 @@ class Login {
             return;
         }
         try {
-            const data = req.body
-            const statusUpdate = await Login.updateStatus(data.email)
+            const data = req.body;
+
+            // Update user status (if applicable)
+            const statusUpdate = await Login.updateStatus(data.email);
+
             if (statusUpdate) {
                 const authInstance = Auth.run({
                     cookieOptions: {
                         httpOnly: true,
                         path: '/',
-                        secure: false,
+                        secure: false, // Change to `true` in production
                         sameSite: 'lax',
                         maxAge: 60 * 60 * 1000
                     }
-                })
-                const sessionId = await authInstance.createSession({ from: data.email, column: 'email' });
+                });
+
+                // Extract user agent from the request headers
+                const userAgent = req.headers['user-agent'];
+
+                // Create a session for the user, passing the email and user-agent for unique device identification
+                const sessionId = await authInstance.createSession({
+                    from: data.email,
+                    column: 'email',
+                    userAgent: userAgent
+                });
+
+                // Set the cookie header with the generated session ID
                 res.writeHead(200, {
                     'Set-Cookie': authInstance.buildCookieHeader(sessionId),
                     'Content-Type': 'application/json'
-                })
-                const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email')
-                res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectUrl }))
+                });
+
+                // Redirect based on the user's role
+                const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email');
+
+                // Send response with success and redirect URL
+                res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectUrl }));
             }
             return;
         } catch (err) {
-            res.writeHead(400, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ success: false, message: 'Something unexpected happened', error: err.message }))
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, message: 'Something unexpected happened', error: err.message }));
         }
     }
+
 
     static async updateStatus(email) {
         const query = await DB.run().select(['aid']).from('admins').where(['email', '=', email]).query();

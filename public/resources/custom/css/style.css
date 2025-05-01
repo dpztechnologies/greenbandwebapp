@@ -52,8 +52,7 @@ select:focus {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    min-height: 100vh;
-    padding-top: 3rem;
+    padding-top: 7rem;
     /* top spacing for mobile */
 }
 
@@ -254,6 +253,7 @@ tbody {
     .center-on-desktop-top-on-mobile {
         align-items: center;
         padding-top: 0rem;
+        min-height: 100vh;
         /* remove top spacing on desktop */
     }
 }
