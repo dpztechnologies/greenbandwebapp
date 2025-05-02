@@ -125,7 +125,7 @@ class Utils {
             setTimeout(() => {
                 toastBootstrap.hide();
                 Utils.executeCallback(ev)
-            }, 3000)
+            }, 2000)
             return;
         } catch (err) {
             console.error(err);
@@ -302,6 +302,14 @@ class Utils {
         }
     }
 
+
+    static handleFormEvents(forms, form, callback, ...params) {
+        if (forms.includes(form)) {
+            return Utils.executeCallback(callback, ...params);
+        }
+        return false;
+    }
+
     static async processLogout(redirectUrl) {
         try {
             let options = {
@@ -341,6 +349,18 @@ class Utils {
         }
     }
 
+
+    static dismissModal(modal) {
+        const modalEl = document.getElementById(modal);
+        if (!modalEl) {
+            console.error(`Modal with ID "${modalId}" not found.`);
+            return;
+        }
+        const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        modalInstance.hide();
+        return;
+    }
+
     static async getData(handlers = { endpoint, beforeSend, success, fail, handler }) {
         handlers.beforeSend();
         try {
@@ -363,8 +383,8 @@ class Utils {
         )
     }
 
-    static executeCallback(callback) {
-        return (typeof callback === 'function') ? callback() : () => { return false }
+    static executeCallback(callback, ...params) {
+        return (typeof callback === 'function') ? callback(...params) : () => { return false }
     }
 
 }

@@ -43,6 +43,7 @@ class LogoutMiddleware {
             }
         } catch (error) {
             // Catch any unexpected errors and send the response
+            console.error(error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, error: error.message }));
         }

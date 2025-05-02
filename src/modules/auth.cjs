@@ -76,8 +76,8 @@ class Auth {
      * @param {string} data.column - The column to match.
      * @returns {Promise<void>}
      */
-    async garbageCollectSession() {
-        await DB.run().delete().from('sessions').where(['expires_at', '>', 'NOW()']).query()
+    static async garbageCollectSession() {
+        await DB.run().query('DELETE FROM sessions WHERE expires_at < NOW() - INTERVAL 1 HOUR');
         return;
     }
 
@@ -102,14 +102,37 @@ class Auth {
         const deviceToken = crypto.createHash('sha256').update(data.from + data.userAgent).digest('hex');
         const sessionId = this.generateSessionId();
         const expires = new Date(Date.now() + this.cookieOptions.maxAge);
-        await DB.run().insert().into('sessions', {
+        const hasExistingSession = await Auth.hasExistingSession(data.from, deviceToken)
+
+        if (hasExistingSession) {
+            const query = await DB.run()
+                .delete()
+                .from('sessions')
+                .where([data.column, '=', data.from]).query();
+            if (!query) throw new Error('Failed to destroy admin session')
+        }
+        const query = await DB.run().insert().into('sessions', {
             id: sessionId,
             [data.column]: data.from,
             expires_at: expires,
             device_token: deviceToken,
         });
-
+        if (!query) throw new Error('Failed to create admin session')
         return sessionId;
+    }
+
+
+    static async hasExistingSession(email, deviceToken) {
+        const query = await DB.run()
+            .select(['id'])
+            .from('sessions')
+            .where(['email', '=', email])
+            .and(['device_token', '=', deviceToken])
+            .query();
+        if (query.getResults().length > 0) {
+            return true
+        }
+        return false;
     }
 
     /**
@@ -134,6 +157,18 @@ class Auth {
 
 
     /**
+    * Sends a 403 Forbidden response and ends the request.
+    *
+    * @param {ServerResponse} res - The HTTP response object.
+    */
+    static reject(res, msg) {
+        res.writeHead(403, { 'Content-Type': 'text/json' });
+        res.end(`${msg}`);
+        return this;
+    }
+
+
+    /**
      * Retrieves a session from the request cookies.
      * @param {Object} req - The HTTP request object.
      * @returns {Promise<Object|null>} The session data or null if not found or expired.
@@ -141,21 +176,24 @@ class Auth {
     async getSessionFromRequest(req) {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
-        if (!sessionId) return null;
+        if (!sessionId) throw new Error('No session Id');
         const userAgent = req.headers['user-agent'];
-
         const query = await DB.run().select(['email']).from('sessions').where(['id', '=', sessionId]).query()
-        const email = query.getResults()[0].email;
-
-        const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
-        const session = await DB.run()
-            .select(['*'])
-            .from('sessions')
-            .where(['id', '=', sessionId])
-            .and(['device_token', '=', deviceToken])
-            .and(['expires_at', '>', 'NOW()'])
-            .query();
-        return session.getResults();
+        if (query.getResults().length > 0) {
+            let email = query.getResults()[0].email;
+            const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
+            const session = await DB.run()
+                .select(['*'])
+                .from('sessions')
+                .where(['id', '=', sessionId])
+                .and(['device_token', '=', deviceToken])
+                .and(['expires_at', '>', 'NOW()'])
+                .query();
+            return session.getResults();
+        } else {
+            console.error('Session not set');
+            return false;
+        }
     }
     /**
      * Deletes a session from the database using the session ID from cookies.
@@ -165,15 +203,18 @@ class Auth {
     async deleteSessionFromRequest(req) {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
-        if (!sessionId) return;
+        if (!sessionId) throw new Error(`Session Id is undefined`);
         const userAgent = req.headers['user-agent'];
-        const deviceToken = crypto.createHash('sha256').update(sessionId + userAgent).digest('hex');
-        await DB.run()
+        const getEmail = await DB.run().select(['email']).from('sessions').where(['id', '=', sessionId]).query()
+        const email = getEmail.getResults()[0].email;
+        const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
+        const query = await DB.run()
             .delete()
             .from('sessions')
             .where(['id', '=', sessionId])
             .and(['device_token', '=', deviceToken])
             .query();
+        if (!query) throw new Error('Failed to delete session');
     }
 
     /**

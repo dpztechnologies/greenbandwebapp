@@ -31,6 +31,7 @@ select:focus {
     font-family: var(--font-family-regular) !important;
 }
 
+
 .text-medium {
     font-size: var(--medium-font-size);
     font-family: var(--font-family-medium);
@@ -212,7 +213,7 @@ td {
     visibility: hidden;
     transition: opacity 0.5s ease, visibility 0.5s ease;
     transform: translateX(-100%);
-    z-index: 1500;
+    z-index: 600;
 }
 
 #sidebar.show {
@@ -230,7 +231,7 @@ td {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease;
-    z-index: 1040;
+    z-index: 500;
 }
 
 /* Show backdrop */
@@ -241,6 +242,20 @@ td {
 
 .fade-out {
     opacity: 0;
+}
+
+
+.table-control svg {
+    cursor: pointer;
+}
+
+.table-control svg path {
+    fill: var(--secondary);
+}
+
+
+.table-control svg:hover path {
+    fill: var(--primary) !important;
 }
 
 tbody {

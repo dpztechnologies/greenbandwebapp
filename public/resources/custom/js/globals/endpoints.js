@@ -6,7 +6,8 @@ const Endpoints = {
     'admin-login': '/process-login',
     'view-admins': '/view-admins',
     'logout': '/logout',
-    'view-admin': '/view-admin'
+    'view-admin': '/view-admin',
+    'admin-count': '/admins/count'
 }
 
 

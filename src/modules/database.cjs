@@ -312,6 +312,12 @@ class Database {
         return this;
     }
 
+
+    offset(n) {
+        this.#sql += ` OFFSET ${n}`
+        return this;
+    }
+
     /**
      * Appends an ORDER BY clause to the SQL query.
      *

@@ -1,5 +1,6 @@
 import Utils from "./utils.js";
 import Endpoints from "./endpoints.js";
+import { handleFormEvent } from "./formEvents.js";
 
 const form = document.querySelector("form");
 const formButton = 'button[type="submit"]'
@@ -33,17 +34,31 @@ async function postData(form, options, successHandler) {
             successHandler(data, form, () => {
                 Utils.disableElement(formButton, false);
                 Utils.handleRedirect(data);
+                handleFormEvent(Utils.getFormId(form));
             })
         } else {
-            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
             let error = JSON.parse(await response.text());
-            return Utils.handleFormErrors(error);
+            if (response.status === 400) {
+                Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                return Utils.handleFormErrors(error);
+            } else {
+                let message = error.message;
+                let errorText = error.error
+                displayToastError(`${message} ${errorText}`)
+                return;
+            }
         }
     } catch (err) {
-        Utils.getError('Something unexpected happened while processing your request', err, () => {
-            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
-        })
+        console.error(err);
+        displayToastError(err)
         return;
     }
 }
 
+
+function displayToastError(err) {
+    Utils.getError('Something unexpected happened while processing your request', err, () => {
+        Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+    })
+    return
+}

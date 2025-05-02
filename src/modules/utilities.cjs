@@ -117,13 +117,14 @@ class Utilities {
 
 
     static sendResults(query, res) {
-        const results = query.getResults();
+        const results = (typeof query === 'object') ? query.getResults() : query;
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
         return;
     }
 
     static sendErrors(error, res) {
+        console.log(error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: false, error: error.message }));
         return;

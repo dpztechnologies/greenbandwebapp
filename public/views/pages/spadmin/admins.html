@@ -79,104 +79,13 @@
                                         <th class="text-nowrap text-center d-none d-md-table-cell">Can Access</th>
                                         <th class="text-nowrap d-flex justify-content-end d-md-table-cell">Actions</th>
                                     </tr>
-                                    <tr id="tableLazyLoading" class="d-none">
-                                        <td colspan="6" class="border-0">
-                                            <div class="d-flex justify-content-start align-items-center my-3">
-                                                <span
-                                                    class="spinner-border spinner-border-sm text-secondary me-2"></span>
-                                                <h6 class="m-0 text-secondary">Loading table data...</h6>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @include("public/views/components/tablelazyload.html")
                                 </thead>
                                 <tbody id="adminsTable">
                                     <!-- Render table data to tbody -->
                                 </tbody>
 
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="100%" class="border-0">
-                                            <div class="d-flex justify-content-end me-lg-5 align-items-center">
-                                                <div
-                                                    class="col-12 col-lg-8 d-flex align-items-lg-center justify-content-between flex-column flex-lg-row">
-                                                    <div class="form-group row align-items-center">
-                                                        <label class="col-lg-7 col-6 text-secondary">Items per
-                                                            page:</label>
-                                                        <div class="col-lg-5 col-6">
-                                                            <select id="tableLimit" class="form-select form-select-sm">
-                                                                <option>1</option>
-                                                                <option>2</option>
-                                                                <option>3</option>
-                                                                <option>4</option>
-                                                                <option selected="selected">5</option>
-                                                                <option>6</option>
-                                                                <option>7</option>
-                                                                <option>8</option>
-                                                                <option>9</option>
-                                                                <option>10</option>
-                                                                <option>11</option>
-                                                                <option>12</option>
-                                                                <option>13</option>
-                                                                <option>14</option>
-                                                                <option>15</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="ms-lg-3 mt-3 mt-lg-0">
-                                                        <h6 class="m-0"><span class="text-secondary">Showing:</span>
-                                                            <span id="firstTableRow">1</span> -
-                                                            <span id="lastTableRow">10</span> of
-                                                            <span id="totalRows">100</span> admins
-                                                        </h6>
-                                                    </div>
-                                                    <div
-                                                        class="controls d-flex justify-content-between align-items-lg-center me-lg-4 mt-3 mt-lg-0">
-                                                        <div id="backSkipArrow">
-                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                <path
-                                                                    d="M16 17C15.7348 16.9999 15.4805 16.8946 15.293 16.707L11.293 12.707C11.1055 12.5195 11.0002 12.2652 11.0002 12C11.0002 11.7348 11.1055 11.4805 11.293 11.293L15.293 7.293C15.4816 7.11084 15.7342 7.01005 15.9964 7.01233C16.2586 7.0146 16.5094 7.11977 16.6948 7.30518C16.8802 7.49059 16.9854 7.7414 16.9877 8.0036C16.99 8.2658 16.8892 8.5184 16.707 8.707L13.414 12L16.707 15.293C16.8468 15.4329 16.942 15.611 16.9806 15.805C17.0192 15.9989 16.9993 16.2 16.9237 16.3827C16.848 16.5654 16.7199 16.7215 16.5555 16.8314C16.391 16.9413 16.1978 17 16 17ZM8 17C7.73478 17 7.48043 16.8946 7.29289 16.7071C7.10536 16.5196 7 16.2652 7 16V8C7 7.73478 7.10536 7.48043 7.29289 7.29289C7.48043 7.10536 7.73478 7 8 7C8.26522 7 8.51957 7.10536 8.70711 7.29289C8.89464 7.48043 9 7.73478 9 8V16C9 16.2652 8.89464 16.5196 8.70711 16.7071C8.51957 16.8946 8.26522 17 8 17Z"
-                                                                    fill="#7F7184" />
-                                                            </svg>
-                                                        </div>
-
-                                                        <div id="backArrow">
-                                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                <path
-                                                                    d="M10.0087 2.88052L4.71094 8.00052L10.0087 13.1205C10.1531 13.2596 10.3468 13.3356 10.5473 13.3319C10.7478 13.3281 10.9385 13.2449 11.0776 13.1005C11.2167 12.9561 11.2927 12.7624 11.289 12.5619C11.2852 12.3615 11.202 12.1707 11.0576 12.0316L6.88427 8.00052L11.0576 3.96497C11.202 3.82588 11.2852 3.63512 11.289 3.43467C11.2927 3.23421 11.2167 3.04048 11.0776 2.89608C10.9385 2.75168 10.7478 2.66846 10.5473 2.66471C10.3468 2.66096 10.1531 2.73699 10.0087 2.87608V2.88052Z"
-                                                                    fill="#7F7184" />
-                                                            </svg>
-                                                        </div>
-
-                                                        <div id="currentPage">
-                                                            <span>1</span>
-                                                        </div>
-
-                                                        <div id="fowardArrow">
-                                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                <path
-                                                                    d="M5.99128 2.88052L11.2891 8.00052L5.99128 13.1205C5.84689 13.2596 5.65315 13.3356 5.4527 13.3319C5.25224 13.3281 5.06149 13.2449 4.9224 13.1005C4.78331 12.9561 4.70727 12.7624 4.71102 12.5619C4.71477 12.3615 4.798 12.1707 4.9424 12.0316L9.11573 8.00052L4.9424 3.96497C4.798 3.82588 4.71477 3.63512 4.71102 3.43467C4.70727 3.23421 4.78331 3.04048 4.9224 2.89608C5.06149 2.75168 5.25224 2.66846 5.4527 2.66471C5.65315 2.66096 5.84689 2.73699 5.99128 2.87608V2.88052Z"
-                                                                    fill="#7F7184" />
-                                                            </svg>
-                                                        </div>
-
-                                                        <div id="forwardSkipArrow">
-                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                <path
-                                                                    d="M8 17C8.26519 16.9999 8.51951 16.8946 8.707 16.707L12.707 12.707C12.8945 12.5195 12.9998 12.2652 12.9998 12C12.9998 11.7348 12.8945 11.4805 12.707 11.293L8.707 7.293C8.5184 7.11084 8.2658 7.01005 8.0036 7.01233C7.7414 7.0146 7.49059 7.11977 7.30518 7.30518C7.11977 7.49059 7.0146 7.7414 7.01233 8.0036C7.01005 8.2658 7.11084 8.5184 7.293 8.707L10.586 12L7.293 15.293C7.15319 15.4329 7.05798 15.611 7.01942 15.805C6.98085 15.9989 7.00065 16.2 7.07632 16.3827C7.15199 16.5654 7.28013 16.7215 7.44454 16.8314C7.60895 16.9413 7.80225 17 8 17ZM16 17C16.2652 17 16.5196 16.8946 16.7071 16.7071C16.8946 16.5196 17 16.2652 17 16V8C17 7.73478 16.8946 7.48043 16.7071 7.29289C16.5196 7.10536 16.2652 7 16 7C15.7348 7 15.4804 7.10536 15.2929 7.29289C15.1054 7.48043 15 7.73478 15 8V16C15 16.2652 15.1054 16.5196 15.2929 16.7071C15.4804 16.8946 15.7348 17 16 17Z"
-                                                                    fill="#7F7184" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tfoot>
+                                @include("public/views/components/tfoot.html")
                             </table>
                         </div>
                     </div>

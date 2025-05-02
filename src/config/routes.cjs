@@ -5,7 +5,8 @@ const Routes = {
         'view-admin': '/view-admin',
         'admins': '/super-admin/admins',
         'default': '/super-admin/admins',
-        'logout': '/logout'
+        'logout': '/logout',
+        'admin-count': '/admins/count',
     },
     'System Admin': {
         'users': '/system-admin/users',

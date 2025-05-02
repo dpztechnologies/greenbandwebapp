@@ -48,7 +48,7 @@ class AuthMiddleware extends Auth {
 
             // If session is not found or expired, reject the request
             if (!session || !session.length) {
-                return AuthMiddleware.#reject(res, 'Session not valid or expired');
+                return Auth.reject(res, 'Session not valid or expired');
             }
 
             // Retrieve the user's role from the database
@@ -60,7 +60,7 @@ class AuthMiddleware extends Auth {
 
             const roles = await result.getResults();
             if (!roles.length) {
-                return AuthMiddleware.#reject(res, 'Role not found');
+                return Auth.reject(res, 'Role not found');
             }
 
             const role = roles[0].role;
@@ -74,7 +74,7 @@ class AuthMiddleware extends Auth {
 
             // If the route is not allowed, reject the request
             if (!isAllowed) {
-                return AuthMiddleware.#reject(res, `Access to invalid route ${req.url}`);
+                return Auth.reject(res, `Access to invalid route ${req.url}`);
             }
 
             // Proceed to the next middleware if everything is valid
@@ -85,40 +85,28 @@ class AuthMiddleware extends Auth {
     }
 
 
-    /**
-     * Sends a 403 Forbidden response and ends the request.
-     *
-     * @param {ServerResponse} res - The HTTP response object.
-     */
-    static #reject(res, msg) {
-        res.writeHead(403, { 'Content-Type': 'text/json' });
-        res.end(`${msg}`);
-        return this;
-    }
-
-
     static async getEmailFromSession(req, res) {
         try {
             const session = await Auth.run().getSessionFromRequest(req);
             // If no session is found, reject the request
             if (!session || session.length === 0) {
-                return AuthMiddleware.#reject(res, 'Session not established');
+                return Auth.reject(res, 'Session not established');
             }
             // Check if the session has expired by comparing with the expiration time
             const expiresAt = session[0].expires_at;
             if (new Date(expiresAt) < new Date()) {
-                return AuthMiddleware.#reject(res, 'Your session has expired');
+                return Auth.reject(res, 'Your session has expired');
             }
 
             // If email exists, return it, otherwise reject
             const email = session[0].email;
             if (!email) {
-                return AuthMiddleware.#reject(res, 'Your session has expired');
+                return Auth.reject(res, 'Your session has expired');
             }
-
             return email;
         } catch (err) {
             console.error('Error fetching email from session:', err);
+            return Auth.reject(res, `Error fetching email from session: ${err}`);
         }
     }
 

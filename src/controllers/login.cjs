@@ -39,23 +39,22 @@ class Login {
                     column: 'email',
                     userAgent: userAgent
                 });
-
                 // Set the cookie header with the generated session ID
                 res.writeHead(200, {
                     'Set-Cookie': authInstance.buildCookieHeader(sessionId),
                     'Content-Type': 'application/json'
                 });
-
                 // Redirect based on the user's role
                 const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email');
-
                 // Send response with success and redirect URL
                 res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectUrl }));
+                return;
             }
-            return;
         } catch (err) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
+            console.error(err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: false, message: 'Something unexpected happened', error: err.message }));
+            return;
         }
     }
 
