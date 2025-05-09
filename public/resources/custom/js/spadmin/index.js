@@ -59,7 +59,7 @@ async function formatTableOnLimitChange() {
         e.preventDefault();
         const limit = parseInt(tableLimit.value);
         const currentPage = 1;
-        await getAdminsTable(`${endPoints['view-admins']}/${limit}`);
+        await getAdminsTable(`${endPoints['view-admins']}?limit=${limit}`);
         await prepareTableControls(tbody);
         setTableTotals(currentPage, limit, await getCount());
         getRowCount(currentPage, limit);
