@@ -1,4 +1,3 @@
-const { Auth } = require('../middlewares/auth.cjs');
 const DB = require('../modules/database.cjs');
 
 
@@ -10,18 +9,29 @@ class Queries {
             .from('admins')
             .join('INNER JOIN', 'admins_activity')
             .on('admins.aid', 'admins_activity.aid')
-            .orderby('admins.id', 'DESC')
+            .orderby('created_at', 'DESC')
             .limit(limit)
             .query();
     }
 
     static async viewAdminsPaginate(page, limit, fields = []) {
+
+        const totalRows = await Queries.viewAdminsCount();
+
+        const totalPages = Math.ceil(totalRows / limit);
+
+        if (page > totalPages) {
+            page = totalPages;
+        }
+
         const offset = Queries.#generateOffset(page, limit);
+
         return await DB.run()
             .select(Queries.#generateFields(fields))
+            .from('admins')
             .join('INNER JOIN', 'admins_activity')
             .on('admins.aid', 'admins_activity.aid')
-            .orderby('admins.id', 'DESC')
+            .orderby('created_at', ' DESC')
             .limit(limit)
             .offset(offset)
             .query();
@@ -29,8 +39,7 @@ class Queries {
 
 
     static #generateOffset(page, limit) {
-        const offset = (page - 1) * limit;
-        return offset;
+        return (page - 1) * limit;;
     }
 
     static #generateFields(fields = []) {
@@ -50,9 +59,30 @@ class Queries {
 
 
     static async viewAdminsCount() {
-        return await DB.run()
-            .count('admins');
+        const query = await DB.run()
+            .select(['COUNT(*) AS total'])
+            .from('admins')
+            .join('INNER JOIN', 'admins_activity')
+            .on('admins.aid', 'admins_activity.aid')
+            .query();
+        return query.getResults()[0].total
     }
+
+    static async searchAdmin(keyword) {
+        return await DB.run()
+            .select(['admins.*', 'admins_activity.*'])
+            .from('admins')
+            .join('INNER JOIN', 'admins_activity')
+            .on('admins.aid', 'admins_activity.aid')
+            .matchAgainst(['firstname', 'lastname', 'email'], keyword)
+            .orderby('relevance', 'DESC')
+            .limit(20)
+            .query();
+
+    }
+
+
+
 }
 
 

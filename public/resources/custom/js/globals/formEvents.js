@@ -1,5 +1,5 @@
 import Utils from "./utils.js";
-import { viewAdminsTable } from "./datautils.js";
+import { getAdminsTable } from "./datautils.js";
 
 const formRegister = ['admin-registration', 'user-registration'];
 
@@ -8,7 +8,7 @@ function formEvents(form) {
     switch (form) {
         case 'admin-registration':
             Utils.dismissModal('modal');
-            viewAdminsTable(5);
+            getAdminsTable(5);
             break;
     }
     return;

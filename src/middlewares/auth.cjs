@@ -25,33 +25,23 @@ class AuthMiddleware extends Auth {
    */
     static async authenticate(req, res, next) {
         try {
-            // Get the email from the session
             const email = await AuthMiddleware.getEmailFromSession(req, res);
-
-            // Extract user agent from the request headers
             const userAgent = req.headers['user-agent'];
-
             const deviceToken = crypto.createHash('sha256').update(email + userAgent).digest('hex');
 
-            // Retrieve the session from the database based on email and user-agent
             const query = await DB.run()
                 .select(['*'])
                 .from('sessions')
                 .where(['email', '=', email])
-                .and(['device_token', '=', deviceToken])  // Ensure the user-agent matches
-                .and(['expires_at', '>', 'NOW()'])   // Ensure the session is not expired
+                .and(['device_token', '=', deviceToken])
+                .and(['expires_at', '>', 'NOW()'])
                 .query();
 
-
             const session = query.getResults();
-
-
-            // If session is not found or expired, reject the request
             if (!session || !session.length) {
                 return Auth.reject(res, 'Session not valid or expired');
             }
 
-            // Retrieve the user's role from the database
             const result = await DB.run()
                 .select(['role'])
                 .from('admins')
@@ -66,18 +56,18 @@ class AuthMiddleware extends Auth {
             const role = roles[0].role;
             const allowedRoutes = Routes[role];
 
-            // Check if the user has permission to access the route
+            // ✅ FIXED: Extract just the pathname for matching
+            const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
+
             const isAllowed = Object.values(allowedRoutes).some(routePattern => {
                 const matcher = match(routePattern, { decode: decodeURIComponent });
-                return matcher(req.url) !== false;
+                return matcher(pathname) !== false;
             });
 
-            // If the route is not allowed, reject the request
             if (!isAllowed) {
-                return Auth.reject(res, `Access to invalid route ${req.url}`);
+                return Auth.reject(res, `Access to invalid route ${pathname}`);
             }
 
-            // Proceed to the next middleware if everything is valid
             next();
         } catch (err) {
             console.error(`Something unexpected happened: ${err}`)

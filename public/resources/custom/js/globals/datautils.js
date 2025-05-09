@@ -1,9 +1,9 @@
 import Utils from "./utils.js";
 import { RenderAdminsTable } from '../spadmin/renders.js';
 
-async function viewAdminsTable(limit) {
+async function getAdminsTable(endpoint) {
     await Utils.getData({
-        endpoint: `${Utils.getEndpoint('view-admins')}/${limit}`,
+        endpoint: endpoint,
         beforeSend: RenderAdminsTable.beforeSend,
         success: RenderAdminsTable.success,
         fail: RenderAdminsTable.fail,
@@ -11,4 +11,4 @@ async function viewAdminsTable(limit) {
     });
 }
 
-export { viewAdminsTable };
+export { getAdminsTable };

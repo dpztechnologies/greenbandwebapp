@@ -175,7 +175,8 @@ class RouteResolver {
  */
 
   async handleRequest(req, res) {
-    const parsedURL = url.parse(req.url, true);
+    // Use modern URL class
+    const parsedURL = new URL(req.url, `http://${req.headers.host}`);
     const urlPath = parsedURL.pathname;
     const method = req.method.toLowerCase();
     const extname = path.extname(urlPath).toLowerCase();
@@ -191,7 +192,7 @@ class RouteResolver {
       await this.parseBody(req, res);
     }
 
-    // Route matching with path-to-regexp
+    // Route matching
     const matchedRoute = this.routes.find(route => {
       const matcher = match(route.path, { decode: decodeURIComponent });
       const matched = matcher(urlPath);
@@ -203,7 +204,9 @@ class RouteResolver {
     });
 
     if (matchedRoute) {
+      // Attach route and query params to req
       req.params = matchedRoute._matched.params || {};
+      req.query = Object.fromEntries(parsedURL.searchParams.entries());
 
       const allMiddlewares = [...this.globalMiddlewares, ...matchedRoute.middlewares];
       let i = 0;
@@ -220,16 +223,13 @@ class RouteResolver {
           RouteResolver.handleError(err, req, res);
         }
       };
-
       next();
       return;
     }
-
     // No route matched
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Invalid route / method' }));
   }
-
   /**
  * Serves static files (such as HTML, CSS, JavaScript, images, etc.) from the server.
  * The method attempts to retrieve the requested file from the server's file system and send it as a response.

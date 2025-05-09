@@ -191,6 +191,11 @@ class Database {
         return this.#primitives('AND', and);
     }
 
+
+    or(or = []) {
+        return this.#primitives('OR', or);
+    }
+
     /**
      * Private helper to process conditional SQL primitives (e.g., WHERE, AND).
      *
@@ -319,6 +324,32 @@ class Database {
     }
 
     /**
+ * Adds a full-text MATCH ... AGAINST clause to the query.
+ * This method assumes a FULLTEXT index already exists on the specified fields.
+ *
+ * @param {Array<string>} columns - The columns to include in the full-text search.
+ * @param {string} keyword - The search keyword.
+ * @param {boolean} [booleanMode=false] - Whether to use BOOLEAN MODE.
+ * @returns {this} The current instance for chaining.
+ */
+    matchAgainst(columns = [], keyword = '') {
+        if (!Array.isArray(columns) || !columns.length || !keyword) {
+            throw new Error('Invalid MATCH AGAINST usage');
+        }
+
+        const escapedKeyword = this.#conn.escape(keyword); // properly escape value (includes surrounding quotes)
+
+        const cols = columns.join(', ');
+        const matchExpr = `MATCH(${cols}) AGAINST (${escapedKeyword} IN NATURAL LANGUAGE MODE)`;
+
+        this.#sql = this.#sql.replace('SELECT', `SELECT ${matchExpr} AS relevance,`); // prepend relevance column
+        this.#sql += ` WHERE ${matchExpr}`;
+        return this;
+    }
+
+
+
+    /**
      * Appends an ORDER BY clause to the SQL query.
      *
      * @param {string} field - The field to order the results by.
@@ -337,6 +368,13 @@ class Database {
      */
     getSQL() {
         return { sql: this.#sql, params: this.#params };
+    }
+
+
+    whereRaw(raw, values = []) {
+        this.#sql += ` WHERE ${raw}`;
+        this.#params.push(...values);
+        return this;
     }
 
 

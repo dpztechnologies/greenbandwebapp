@@ -1,12 +1,14 @@
 const Routes = {
     'Super Admin': {
         'dashboard': '/super-admin/dashboard',
-        'view-admins': '/view-admins/:limit',
-        'view-admin': '/view-admin',
+        'view-admins': '/view/admins',
+        'view-admin': '/view/admin',
         'admins': '/super-admin/admins',
         'default': '/super-admin/admins',
         'logout': '/logout',
         'admin-count': '/admins/count',
+        'admins-paginate': '/admins/paginate',
+        'admins-search': '/admins/search'
     },
     'System Admin': {
         'users': '/system-admin/users',

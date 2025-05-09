@@ -1,6 +1,7 @@
 import Utils from '../globals/utils.js';
+import Tables from '../globals/tables.js';
 
-class RenderAdminsTable {
+class RenderAdminsTable extends Tables {
 
     static #spinner = '#tableLazyLoading';
 
@@ -15,11 +16,11 @@ class RenderAdminsTable {
         if (!target) throw new Error(`Invalid target ${RenderAdminsTable.#target}`);
 
         // Start fade-out
-        target.style.transition = 'opacity 300ms ease';
+        target.style.transition = 'opacity 900ms ease';
         target.style.opacity = 0;
 
         // Wait for fade-out to complete, then render data and fade in
-        RenderAdminsTable.tableAnimation(300, () => {
+        RenderAdminsTable.tableAnimation(900, () => {
             RenderAdminsTable.#renderData(target, data);
             target.style.opacity = 1;
         });
@@ -27,7 +28,10 @@ class RenderAdminsTable {
 
 
 
+
+
     static #renderData(target, data) {
+        if (Tables.handleEmptyRows(target, data)) return;
         let count = 1;
         const rows = data.map(item => {
             const statusClass = item.status === 'Online' ? 'bg-success' : 'bg-secondary';
@@ -38,7 +42,7 @@ class RenderAdminsTable {
                 </span>`;
             return `
             <tr>
-                <td>${count++}</td>
+                <td class="count">${count++}</td>
                 <td>${item.firstname} ${item.lastname}</td>
                 <td class="d-none d-sm-table-cell">${item.email}</td>
                 <td class="d-none d-md-table-cell">${roleBadge}</td>

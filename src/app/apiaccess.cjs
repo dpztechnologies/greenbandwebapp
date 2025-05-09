@@ -2,11 +2,10 @@ const fs = require("fs");
 const utilities = require("../modules/utilities.cjs");
 const { Auth } = require('../middlewares/auth.cjs');
 const Query = require('../controllers/queries.cjs');
-
 const { view } = require('../helpers/functions.cjs');
 
 
-class API {
+class APIAccess {
 
     /**
      * ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -34,7 +33,7 @@ class API {
      * SUPER ADMIN
      * ```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````` 
      */
-    static async showAdmins(req, res) {
+    static async getAdminsPage(req, res) {
         const html = await view('pages/spadmin/admins.html');
         res.writeHead(200, { "Content-Type": "text/html" });
         res.write(html);
@@ -43,11 +42,9 @@ class API {
 
     static async getAdmins(req, res) {
         try {
-            if (typeof Number(req.params.limit) === 'number') {
-                const query = await Query.viewAdmins(req.params.limit);
-                return utilities.sendResults(query, res);
-            }
-            return false;
+            const { limit } = req.query
+            const query = await Query.viewAdmins(parseInt(limit));
+            return utilities.sendResults(query, res);
         } catch (error) {
             return utilities.sendErrors(error, res);
         }
@@ -75,10 +72,29 @@ class API {
     }
 
 
+    static async getAdminsPaginate(req, res) {
+        try {
+            const { currentPage, limit } = req.query;
+            const query = await Query.viewAdminsPaginate(currentPage, limit);
+            return utilities.sendResults(query, res);
+        } catch (error) {
+            console.error(error);
+            return utilities.sendErrors(error, res)
+        }
+    }
 
 
-
+    static async getAdminSearch(req, res) {
+        try {
+            const { keyword } = req.query;
+            const query = await Query.searchAdmin(keyword);
+            return utilities.sendResults(query, res);
+        } catch (error) {
+            console.error(error);
+            return utilities.sendErrors(error, res);
+        }
+    }
 
 }
 
-module.exports = { API }
+module.exports = { APIAccess }
