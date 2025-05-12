@@ -2,7 +2,7 @@
  * Defines all data sources and their endpoints
  */
 const Endpoints = {
-    'admin-registration': '/process/admin-registration',
+    'admin-registration': '/process/admin/registration',
     'admin-login': '/process/login',
     'view-admins': '/view/admins',
     'logout': '/logout',

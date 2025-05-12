@@ -22,8 +22,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         handler: RenderAdminProfile.display,
     })
     /**
-     * Admins Table
+     * 
      */
+    setTableName('admins')
+    /**
+    * 
+    */
     const limit = 8
     /**
      * 
@@ -41,28 +45,33 @@ document.addEventListener('DOMContentLoaded', async () => {
      * Format table on Limit Change
      */
     formatTableOnLimitChange();
-
+    /**
+     * 
+     */
     Utils.logout('logoutController');
-
+    /**
+     * 
+     */
     prepareTableControls();
-
+    /**
+     * 
+     */
     searchTable();
-
 })
 
 
 
-async function formatTableOnLimitChange() {
+async function formatTableOnLimitChange(callback) {
     const tableLimit = document.getElementById("tableLimit");
     const tbody = document.querySelector('tbody');
     tableLimit.onchange = async (e) => {
         e.preventDefault();
         const limit = parseInt(tableLimit.value);
         const currentPage = 1;
-        await getAdminsTable(`${endPoints['view-admins']}?limit=${limit}`);
+        await getAdminsTable(`${endPoints['view-admins']}?limit=${limit}`)
         await prepareTableControls(tbody);
         setTableTotals(currentPage, limit, await getCount());
-        getRowCount(currentPage, limit);
+        await getRowCount(currentPage, limit);
     };
 }
 
@@ -93,6 +102,11 @@ function setTableLimit(limit) {
     tableLimit.value = limit
 }
 
+function setTableName(name) {
+    const tableName = document.getElementById("tableName");
+    tableName.innerHTML = name;
+}
+
 
 
 
@@ -111,17 +125,33 @@ async function fetchCount(url) {
 }
 
 
-function getRowCount(currentPage, limit) {
+async function getRowCount(currentPage, limit) {
     const counted = document.querySelectorAll('.count');
     const startIndex = (currentPage - 1) * limit;
+    let counts = [];
     counted.forEach((count, index) => {
-        count.innerHTML = startIndex + index + 1;
+        let endIndex = startIndex + index + 1;
+        count.innerHTML = endIndex;
+        counts = [];
+        counts.push(endIndex);
     });
+    const endIndex = counts[counts.length - 1];
+    setTableCounters(startIndex, endIndex, await getCount())
+}
+
+
+function setTableCounters(start, end, totalRows) {
+    const startCounterId = document.getElementById("firstTableRow")
+    const endCounterId = document.getElementById("lastTableRow")
+    const totalRowsId = document.getElementById("totalRows")
+    startCounterId.innerHTML = parseInt(start) + 1;
+    endCounterId.innerHTML = end
+    totalRowsId.innerHTML = totalRows
 }
 
 
 
-function searchTable() {
+function searchTable(callback) {
     const searchBox = document.getElementById('tableSearch');
     let debounceTimer;
     searchBox.addEventListener('input', () => {
@@ -131,7 +161,7 @@ function searchTable() {
             if (query.length > 1) {
                 modifyTableOnSearch(query);
             } else {
-                await getAdminsTable(`${endPoints['view-admins']}?limit=8`)
+                Utils.executeAsyncCallback(callback())
             }
         }, 400);
     });
@@ -190,7 +220,7 @@ function getTableControls(totalRows = 50, rowsPerPage = 10, tbody) {
         await animateTableReload(tbody, async () => {
             await modifyTableOnControlsChange(currentPage.value, limitValue);
         });
-        getRowCount(currentPage.value, limitValue);
+        await getRowCount(currentPage.value, limitValue);
         return;
     };
 }

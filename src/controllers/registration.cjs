@@ -1,6 +1,7 @@
 const DB = require("../modules/database.cjs");
 const Hashing = require("../modules/hashing.cjs");
 const Utilities = require("../modules/utilities.cjs");
+const Queries = require("./queries.cjs");
 
 class Registration {
 
@@ -10,7 +11,8 @@ class Registration {
             data.password = await Hashing.hashPassword(data.password)
             data.aid = Utilities.getRandom(1000, 10000);
             delete data.form;
-
+            const count = await Queries.viewAdminsCount();
+            data.seq = parseInt(count) + 1;
             const adminsTable = 'admins';
             const adminsActivity = 'admins_activity';
             const insertAdmin = await DB.run().insert().into(adminsTable, data)

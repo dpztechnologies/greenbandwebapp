@@ -384,7 +384,12 @@ class Utils {
     }
 
     static executeCallback(callback, ...params) {
-        return (typeof callback === 'function') ? callback(...params) : () => { return false }
+        (typeof callback === 'function') ? callback(...params) : () => { return false }
+    }
+
+
+    static async executeAsyncCallback(callback, ...params) {
+        return (callback.constructor.name === 'AsyncFunction') ? await callback(...params) : () => { return false }
     }
 
 }

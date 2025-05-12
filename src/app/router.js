@@ -100,7 +100,7 @@ app.post("/process/login", [Sanitizer.sanitize, Validator.validate], async (req,
     return await Login.admin(req, res);
 })
 
-app.post("/process/admin-registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
+app.post("/process/admin/registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
     return Register.admin(req, res);
 })
 
