@@ -43,7 +43,19 @@ class APIAccess {
     static async getAdmins(req, res) {
         try {
             const { limit } = req.query
-            const query = await Query.viewAdmins(parseInt(limit));
+            const email = await Auth.getEmailFromSession(req, res);
+            const query = await Query.viewAdmins(parseInt(limit), [], email);
+            return utilities.sendResults(query, res);
+        } catch (error) {
+            return utilities.sendErrors(error, res);
+        }
+    }
+
+
+    static async getCurrentAdmin(req, res) {
+        try {
+            const email = await Auth.getEmailFromSession(req, res);
+            const query = await Query.viewAdmin(email, ['admins.firstname', 'admins.role'])
             return utilities.sendResults(query, res);
         } catch (error) {
             return utilities.sendErrors(error, res);
@@ -53,8 +65,8 @@ class APIAccess {
 
     static async getAdmin(req, res) {
         try {
-            const email = await Auth.getEmailFromSession(req, res);
-            const query = await Query.viewAdmin(email, ['admins.firstname', 'admins.role'])
+            const id = req.query
+            const query = await Query.viewAdmin(id.id, [], 'aid');
             return utilities.sendResults(query, res);
         } catch (error) {
             return utilities.sendErrors(error, res);
@@ -88,6 +100,18 @@ class APIAccess {
         try {
             const { keyword } = req.query;
             const query = await Query.searchAdmin(keyword);
+            return utilities.sendResults(query, res);
+        } catch (error) {
+            console.error(error);
+            return utilities.sendErrors(error, res);
+        }
+    }
+
+    static async deleteAdmin(req, res) {
+        try {
+            const { id } = req.query;
+            const email = await Auth.getEmailFromSession(req, res);
+            const query = await Query.deleteAdmin(id, email);
             return utilities.sendResults(query, res);
         } catch (error) {
             console.error(error);

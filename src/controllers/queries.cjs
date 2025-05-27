@@ -3,12 +3,13 @@ const DB = require('../modules/database.cjs');
 
 class Queries {
 
-    static async viewAdmins(limit = 10, fields = []) {
+    static async viewAdmins(limit = 10, fields = [], forbiddenEmail) {
         return await DB.run()
             .select(Queries.#generateFields(fields))
             .from('admins')
             .join('INNER JOIN', 'admins_activity')
             .on('admins.aid', 'admins_activity.aid')
+            .where(['admins.email', '!=', forbiddenEmail])
             .orderby('created_at', 'DESC')
             .limit(limit)
             .query();
@@ -47,15 +48,29 @@ class Queries {
     }
 
 
-    static async viewAdmin(email, fields = []) {
-        return await DB.run()
-            .select((fields.length > 0) ? fields : ['*'])
-            .from('admins')
-            .join('INNER JOIN', 'admins_activity')
-            .on('admins.aid', 'admins_activity.aid')
-            .where(['admins.email', '=', email])
-            .query();
+    static async viewAdmin(value, fields = [], flag = 'email') {
+        switch (flag) {
+            case 'email':
+                return await DB.run()
+                    .select((fields.length > 0) ? fields : ['*'])
+                    .from('admins')
+                    .join('INNER JOIN', 'admins_activity')
+                    .on('admins.aid', 'admins_activity.aid')
+                    .where(['admins.email', '=', value])
+                    .query();
+            case 'aid':
+                return await DB.run()
+                    .select((fields.length > 0) ? fields : ['*'])
+                    .from('admins')
+                    .join('INNER JOIN', 'admins_activity')
+                    .on('admins.aid', 'admins_activity.aid')
+                    .where(['admins.aid', '=', value])
+                    .query();
+        }
+
     }
+
+
 
 
     static async viewAdminsCount() {
@@ -81,7 +96,11 @@ class Queries {
 
     }
 
-
+    static async deleteAdmin(id, email) {
+        await DB.run().delete().from('admins').where(['aid', '=', id]).query();
+        await DB.run().delete().from('admins_activity').where(['aid', '=', id]).query();
+        return await this.viewAdmins(10, [], email);
+    }
 
 }
 

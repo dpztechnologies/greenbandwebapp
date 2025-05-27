@@ -57,6 +57,36 @@ const ValidationRules = {
         }
 
 
+    },
+    'admin-update': {
+        firstname: {
+            required: true,
+            pattern: RegEx['letters-only'],
+            min: 2,
+            max: 20,
+        },
+        lastname: {
+            required: true,
+            pattern: RegEx['letters-only'],
+            min: 2,
+            max: 20,
+        },
+        role: {
+            required: true,
+            values: ['Super Admin', 'System Admin']
+        },
+        'phone-no': {
+            required: true,
+            unique: 'admins|phone_no|false|true|aid',
+            min: 10,
+            max: 10,
+            pattern: RegEx['numbers-only']
+        },
+        'email': {
+            required: true,
+            unique: 'admins|email|false|true|aid', //table, column, exists, updateable
+            pattern: RegEx['email']
+        }
     }
 }
 

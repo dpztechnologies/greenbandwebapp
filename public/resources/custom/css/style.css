@@ -263,6 +263,12 @@ tbody {
     transition: opacity 0.9s ease;
 }
 
+.delete,
+.view,
+.edit {
+    cursor: pointer;
+}
+
 
 @media (min-width: 768px) {
     .center-on-desktop-top-on-mobile {

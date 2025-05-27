@@ -349,6 +349,15 @@ class Utils {
         }
     }
 
+    /**
+     * Checks if a variable is defined
+     * @param {string|number|array|object|null|undefined} item 
+     * @returns {bool} true if defined false if undefuined
+     */
+    static isDefined(item) {
+        return (typeof item !== 'null' && typeof item !== 'undefined') ? true : false;
+    }
+
 
     static dismissModal(modal) {
         const modalEl = document.getElementById(modal);

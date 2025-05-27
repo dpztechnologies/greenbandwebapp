@@ -1,4 +1,4 @@
-const { ValidationRules } = require('../config/validation.cjs');
+const { ValidationRules } = require('../config/rules.cjs');
 
 const DB = require('../modules/database.cjs');
 
@@ -83,7 +83,7 @@ class Validator {
                         this.#handlePattern(data, field, rule);
                         break;
                     case 'unique':
-                        await this.#handleUnique(data, field, rule);
+                        await this.#handleUnique(this.data, field, rule);
                         break;
                     case 'verified_by':
                         await this.#handleVerifiedBy(this.data, field, rule);
@@ -170,13 +170,14 @@ class Validator {
 
     /**
      * Handles the "unique" validation rule.
-     * @param {string} data - The value of the field being validated.
+     * @param {string} request - The value of the field being validated.
      * @param {string} field - The field name.
      * @param {string} rule - The rule containing the table and column for uniqueness check.
      * @returns {boolean} Returns `false` after processing.
      */
-    async #handleUnique(data, field, rule) {
-        const [table, column, exists] = rule.split('|');
+    async #handleUnique(request, field, rule) {
+        const [table, column, exists, update, updateId] = rule.split('|');
+        const data = request[field];
         const count = await DB.run().count(table, [column, '=', data]);
         switch (exists) {
             case 'true':
@@ -186,9 +187,19 @@ class Validator {
                 }
                 break;
             case 'false':
-                if (count > 0) {
+                if (count > 0 && update === null) {
                     this.errors.push({ message: `${field} already exists`, handler: `${field}` });
                     return false;
+                }
+                if (update) {
+                    const query = await DB.run().select([column]).from(table).where([updateId, '=', request[updateId]]).query();
+                    const res = query.getResults();
+                    if (data !== res[0][column]) {
+                        if (count > 0) {
+                            this.errors.push({ message: `${field} already exists`, handler: `${field}` });
+                            return false;
+                        }
+                    }
                 }
                 break;
         }

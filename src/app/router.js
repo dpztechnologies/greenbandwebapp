@@ -1,10 +1,8 @@
 const { routeProvider } = require("../modules/routes.cjs");
 const { Validator } = require('../middlewares/validate.cjs');
 const { Sanitizer } = require('../middlewares/sanitize.cjs');
-const { Register } = require("../controllers/registration.cjs");
-const Login = require("../controllers/login.cjs");
+const { Admin } = require("../controllers/admin.cjs");
 const { Auth } = require('../middlewares/auth.cjs');
-const { Logout } = require("../middlewares/logout.cjs");
 const { APIAccess } = require('./apiaccess.cjs')
 const app = routeProvider();
 
@@ -71,6 +69,10 @@ app.get('/admins/count', [Auth.authenticate, Sanitizer.sanitize], async (req, re
     return await APIAccess.getAdminsCount(req, res);
 });
 
+app.get('/view/current-admin', [Auth.authenticate], async (req, res) => {
+    return await APIAccess.getCurrentAdmin(req, res)
+})
+
 app.get('/view/admin', [Auth.authenticate], async (req, res) => {
     return await APIAccess.getAdmin(req, res)
 })
@@ -82,6 +84,10 @@ app.get('/admins/paginate', [Auth.authenticate, Sanitizer.sanitize], async (req,
 
 app.get('/admins/search', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
     return await APIAccess.getAdminSearch(req, res);
+})
+
+app.get('/admins/delete', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await APIAccess.deleteAdmin(req, res);
 })
 
 
@@ -96,17 +102,24 @@ app.get('/admins/search', [Auth.authenticate, Sanitizer.sanitize], async (req, r
  */
 
 
-app.post("/process/login", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
-    return await Login.admin(req, res);
+app.post("/process/admin/login", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
+    return await Admin.login(req, res);
 })
 
 app.post("/process/admin/registration", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
-    return Register.admin(req, res);
+    return Admin.register(req, res);
 })
 
 
+app.post("/process/admin/update", [Sanitizer.sanitize, Validator.validate], async (req, res) => {
+    return Admin.update(req, res);
+})
+
+
+
+
 app.post('/logout', [Auth.authenticate], async (req, res) => {
-    return Logout.exit(req, res);
+    return Admin.logout(req, res);
 });
 
 
