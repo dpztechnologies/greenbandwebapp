@@ -1,8 +1,15 @@
-import Utils from '../globals/utils.js';
+import Utils from '../global/utils.js';
 import { RenderAdminProfile } from './renders.js';
-import { getAdminsTable, editAdmin } from '../globals/datautils.js';
-import Tables from '../globals/tables.js';
+import { DataHandler } from './datahandler.js';
+import { TableController as Tables } from '../controllers/tables.js';
+import FormHandler from './formhandler.js';
+import LogoutController from '../controllers/logout.js';
+import Endpoints from './endpoints.js';
 
+
+Utils.toggleSidebar('.sidebarController')
+
+Utils.setEndpointSource(Endpoints);
 
 const endPoints = {
     'view-admins': Utils.getEndpoint('view-admins'),
@@ -12,6 +19,7 @@ const endPoints = {
     'admins-count': '/admins/count',
     'view-admin': '/view/admin'
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -33,7 +41,15 @@ document.addEventListener('DOMContentLoaded', async () => {
      * LOGOUT ADMIN
      * ---------------------------------------------------------------------------------------------------------------------
     */
-    Utils.logout('logoutController');
+    LogoutController.logout('logoutController');
+
+
+    /**
+     * ---------------------------------------------------------------------------------------------------------------------
+     * HANDLE FORM REQUESTS
+     * ---------------------------------------------------------------------------------------------------------------------
+    */
+    FormHandler.handleRequests();
 
     /**
      * ---------------------------------------------------------------------------------------------------------------------
@@ -56,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     /**
      * Get admins table
      */
-    await getAdminsTable(`${endPoints['view-admins']}?limit=${limit}`)
+    await DataHandler.getAdminsTable(`${endPoints['view-admins']}?limit=${limit}`)
     /**
      * Set table limit
      */
@@ -64,42 +80,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     /**
      * Set table totals
      */
-    Tables.call(getAdminsTable)
+    Tables.call(DataHandler.getAdminsTable)
         .setCount(count)
         .setTotals(1, limit);
     /**
      * Format table on Limit Change
      */
-    Tables.call(getAdminsTable)
+    Tables.call(DataHandler.getAdminsTable)
         .setUrl(endPoints['view-admins'])
         .setCount(count)
         .formatTableOnLimitChange()
     /**
      * Get table controls
      */
-    Tables.call(getAdminsTable)
+    Tables.call(DataHandler.getAdminsTable)
         .setUrl(endPoints['admins-paginate'])
         .setCount(count)
         .getControls()
     /**
      * Search Table
      */
-    Tables.call(getAdminsTable)
+    Tables.call(DataHandler.getAdminsTable)
         .setUrl(endPoints['search-admin'])
         .setFallbackUrl(`${endPoints['view-admins']}?limit=8}`)
         .search();
     /**
      * Delete row
      */
-    Tables.call(getAdminsTable)
+    Tables.call(DataHandler.getAdminsTable)
         .setUrl(endPoints['delete-admin'])
-        .deleteRow();
+        .deleteRow(DataHandler.getAdminDeletePrompt);
     /**
      * Edit row
      */
-    Tables.call(editAdmin)
+    Tables.call(DataHandler.editAdmin)
         .setUrl(endPoints['view-admin'])
         .editRow();
+    /**
+     * Render Admins Registration forms
+     */
+    DataHandler.getAdminRegistrationForm()
 })
 
 

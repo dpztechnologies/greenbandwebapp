@@ -15,7 +15,7 @@ class Queries {
             .query();
     }
 
-    static async viewAdminsPaginate(page, limit, fields = []) {
+    static async viewAdminsPaginate(page, limit, fields = [], forbiddenEmail) {
 
         const totalRows = await Queries.viewAdminsCount();
 
@@ -32,6 +32,7 @@ class Queries {
             .from('admins')
             .join('INNER JOIN', 'admins_activity')
             .on('admins.aid', 'admins_activity.aid')
+            .where(['admins.email', '!=', forbiddenEmail])
             .orderby('created_at', ' DESC')
             .limit(limit)
             .offset(offset)

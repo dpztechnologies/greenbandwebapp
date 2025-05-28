@@ -12,7 +12,7 @@ const ValidationRules = {
         email: {
             required: true,
             pattern: RegEx['email'],
-            unique: 'admins|email|true',
+            unique: 'admins|email|true|false',
         },
         password: {
             required: true,
@@ -39,14 +39,14 @@ const ValidationRules = {
         },
         'phone-no': {
             required: true,
-            unique: 'admins|phone_no|false',
+            unique: 'admins|phone_no|false|false',
             min: 10,
             max: 10,
             pattern: RegEx['numbers-only']
         },
         'email': {
             required: true,
-            unique: 'admins|email|false',
+            unique: 'admins|email|falsefalse',
             pattern: RegEx['email']
         },
         'password': {

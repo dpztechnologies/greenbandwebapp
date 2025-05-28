@@ -87,7 +87,8 @@ class APIAccess {
     static async getAdminsPaginate(req, res) {
         try {
             const { currentPage, limit } = req.query;
-            const query = await Query.viewAdminsPaginate(currentPage, limit);
+            const email = await Auth.getEmailFromSession(req, res);
+            const query = await Query.viewAdminsPaginate(currentPage, limit, [], email);
             return utilities.sendResults(query, res);
         } catch (error) {
             console.error(error);

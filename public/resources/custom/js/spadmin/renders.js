@@ -1,5 +1,5 @@
-import Utils from '../globals/utils.js';
-import Tables from '../globals/tables.js';
+import Utils from '../global/utils.js';
+import { TableController as Tables } from '../controllers/tables.js';
 
 class RenderAdminsTable extends Tables {
 
@@ -52,7 +52,7 @@ class RenderAdminsTable extends Tables {
                 <td class="d-none d-md-table-cell">
                     <div class="d-flex justify-content-center">
                         <div class="form-check form-switch">
-                            <input class="form-check-input form-check-lg" style="transform: scale(1.5);"
+                            <input class="form-check-input form-check-lg" id="adminCanAccess" style="transform: scale(1.5);"
                                 type="checkbox" id="flexSwitch" ${isChecked}>
                         </div>
                     </div>
@@ -130,6 +130,8 @@ class RenderAdminProfile {
     }
 
 }
+
+
 
 
 export { RenderAdminProfile, RenderAdminsTable }

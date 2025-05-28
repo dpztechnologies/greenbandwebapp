@@ -187,11 +187,11 @@ class Validator {
                 }
                 break;
             case 'false':
-                if (count > 0 && update === null) {
+                if (count > 0 && update === 'false') {
                     this.errors.push({ message: `${field} already exists`, handler: `${field}` });
                     return false;
                 }
-                if (update) {
+                if (update === 'true') {
                     const query = await DB.run().select([column]).from(table).where([updateId, '=', request[updateId]]).query();
                     const res = query.getResults();
                     if (data !== res[0][column]) {

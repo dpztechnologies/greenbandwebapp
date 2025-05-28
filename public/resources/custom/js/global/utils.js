@@ -1,11 +1,11 @@
-import Endpoints from "./endpoints.js";
-
 /**
  * @author DPZTechnologies
  * @date Thu Apr 03 2025 15:17:25 GMT+0300 (East Africa Time)
  * @abstract Frontend Utilities
  */
 class Utils {
+
+    static #endPointSource;
     /**
      * Constructs a full URL by combining the current origin with the given path.
      * 
@@ -38,11 +38,22 @@ class Utils {
     }
 
 
-    static getEndpoint(source) {
-        if (Endpoints.hasOwnProperty(source)) {
-            return Endpoints[source]
+    static setEndpointSource(source) {
+        Utils.#endPointSource = source;
+        return;
+    }
+
+    static getEndpoint(endpoint) {
+        if (Utils.isDefined(Utils.#endPointSource)) {
+            if (Utils.#endPointSource.hasOwnProperty(endpoint)) {
+                return Utils.#endPointSource[endpoint]
+            }
+            throw new Error(`Invalid source ${source} or endpoint ${endpoint}`)
         }
-        throw new Error(`Invalid endpoint source ${source}`)
+        if (Utils.isDefined(endpoint)) {
+            return endpoint
+        }
+        throw new Error(`${endpoint} is required`)
     }
 
 
@@ -165,7 +176,7 @@ class Utils {
      * @param {Function} callback - The callback to execute after completion.
      * @returns {void}
      */
-    static successHandlerV1(data, form, callback) {
+    static successHandler(data, form, callback) {
         Utils.displayToastMessage('.toast', data.message, 'bg-success', () => {
             form.reset();
             Utils.resetPlaceholders();
@@ -228,8 +239,8 @@ class Utils {
      * @param {string} selector - The CSS selector of the target element.
      * @returns {void}
      */
-    static classListActions(action = 'add', classNames = [], selector) {
-        const element = document.querySelector(selector);
+    static classListActions(action = 'add', classNames = [], selector, replacements = []) {
+        const element = (typeof selector === 'string') ? document.querySelector(selector) : selector;
         if (!element) return;
         classNames.forEach(className => {
             switch (action) {
@@ -241,6 +252,12 @@ class Utils {
                     break;
                 case 'toggle':
                     element.classList.toggle(className);
+                    break;
+                case 'replace':
+                    (element.classList.contains(className)) && element.classList.remove(className);
+                    replacements.forEach(replacement => {
+                        element.classList.add(replacement);
+                    })
                     break;
             }
         })
@@ -303,40 +320,13 @@ class Utils {
     }
 
 
-    static handleFormEvents(forms, form, callback, ...params) {
+    static handleFormEvents(forms, form, callback) {
         if (forms.includes(form)) {
-            return Utils.executeCallback(callback, ...params);
+            return Utils.executeCallback(callback, form);
         }
         return false;
     }
 
-    static async processLogout(redirectUrl) {
-        try {
-            let options = {
-                'method': 'POST',
-                'body': new FormData()
-            }
-            const res = await fetch(Utils.getEndpoint('logout'), options);
-            if (res.ok) {
-                const data = await res.json();
-                Utils.displayToastMessage('#alert-toast', data.message, 'bg-info', () => {
-                    window.location.href = redirectUrl;
-                })
-            }
-        } catch (err) {
-            Utils.getError("Something unexpected happened", err);
-        }
-
-    }
-
-
-    static logout(selector) {
-        const logoutHandler = document.getElementById(selector)
-        logoutHandler.onclick = async () => {
-            await Utils.processLogout('/login');
-        }
-        return;
-    }
 
     static displaySpinner(display = false, selector) {
         switch (display) {
@@ -400,6 +390,27 @@ class Utils {
     static async executeAsyncCallback(callback, ...params) {
         return (callback.constructor.name === 'AsyncFunction') ? await callback(...params) : () => { return false }
     }
+
+
+    static displayToastError(err) {
+        Utils.getError('Something unexpected happened while processing your request', err, () => {
+            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+        })
+        return
+    }
+
+
+    static toggleSidebar(selector) {
+        const triggers = document.querySelectorAll(selector);
+        triggers.forEach(trigger => {
+            trigger.onclick = (e) => {
+                Utils.classListActions('toggle', ['show'], '#sidebar')
+                Utils.classListActions('toggle', ['show'], '.sidebar-backdrop')
+                return;
+            }
+        })
+    }
+
 
 }
 
