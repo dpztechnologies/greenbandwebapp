@@ -10,7 +10,8 @@ const Routes = {
         'admin-count': '/admins/count',
         'admins-paginate': '/admins/paginate',
         'admins-search': '/admins/search',
-        'delete-admin': '/admins/delete'
+        'delete-admin': '/admins/delete',
+        'admin-access': '/admins/allow-access'
     },
     'System Admin': {
         'users': '/system-admin/users',

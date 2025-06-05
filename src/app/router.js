@@ -44,9 +44,30 @@ app.get("/login", [], (req, res) => {
     return APIAccess.getLoginPage(req, res);
 });
 
-
-
-
+/**
+ * Error 404 page
+ */
+app.get("/404", [], (req, res) => {
+    return APIAccess.get404Page(req, res);
+});
+/**
+ * Error 403 page
+ */
+app.get("/403", [], (req, res) => {
+    return APIAccess.get403Page(req, res);
+});
+/**
+ * Error 400 page
+ */
+app.get("/400", [], (req, res) => {
+    return APIAccess.get400Page(req, res);
+});
+/**
+ * Error 500 page
+ */
+app.get("/500", [], (req, res) => {
+    return APIAccess.get500Page(req, res);
+});
 
 /**
  * ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -89,6 +110,11 @@ app.get('/admins/search', [Auth.authenticate, Sanitizer.sanitize], async (req, r
 app.get('/admins/delete', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
     return await APIAccess.deleteAdmin(req, res);
 })
+
+app.get('/admins/allow-access', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await APIAccess.allowAdminAccess(req, res);
+})
+
 
 
 

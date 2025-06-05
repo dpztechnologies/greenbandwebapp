@@ -45,6 +45,14 @@ select:focus {
     font-size: var(--small-font-size);
 }
 
+.text-lg {
+    font-size: var(--large-font-size);
+}
+
+.text-xlg {
+    font-size: var(--extra-large-font-size);
+}
+
 .text-secondary {
     color: var(--secondary) !important;
 }
@@ -55,6 +63,11 @@ select:focus {
     flex-direction: column;
     padding-top: 7rem;
     /* top spacing for mobile */
+}
+
+/* Dark */
+.text-dark {
+    color: var(--dark) !important;
 }
 
 /* Light */
@@ -267,6 +280,16 @@ tbody {
 .view,
 .edit {
     cursor: pointer;
+}
+
+@media (max-width: 500px) {
+    .text-lg {
+        font-size: 30px !important;
+    }
+
+    .text-xlg {
+        font-size: 80px !important;
+    }
 }
 
 

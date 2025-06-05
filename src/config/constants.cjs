@@ -45,6 +45,10 @@ const StaticFilePath = Path.getFile(RootDir, 'public');
 const FilePaths = {
     login: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'login.html'),
     home: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'home.html'),
+    error404: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '404.html'),
+    error403: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '403.html'),
+    error400: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '400.html'),
+    error500: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '500.html'),
     register: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'register.html'),
     'super-admin/admins': Path.getFile(RootDir, 'public', 'views', 'pages', 'spadmin', 'admins.html')
 }

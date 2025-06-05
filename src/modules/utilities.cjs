@@ -123,6 +123,12 @@ class Utilities {
         return;
     }
 
+    static sendResponse(query, res) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(query));
+        return;
+    }
+
     static sendErrors(error, res) {
         console.log(error);
         res.writeHead(500, { 'Content-Type': 'application/json' });

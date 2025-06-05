@@ -71,39 +71,48 @@ class Admin {
         try {
             const data = req.body;
 
-            // Update user status (if applicable)
-            const statusUpdate = await Admin.updateStatus(data.email);
+            // Redirect based on the user's role
+            const redirectResponse = await this.#redirectBasedOnRoleAndStatus(data.email, 'email');
+            const redirectData = JSON.parse(redirectResponse);
 
-            if (statusUpdate) {
-                const authInstance = Auth.run({
-                    cookieOptions: {
-                        httpOnly: true,
-                        path: '/',
-                        secure: false, // Change to `true` in production
-                        sameSite: 'lax',
-                        maxAge: 60 * 60 * 1000
+            // Send response with success and redirect URL
+
+            switch (redirectData.status) {
+                case 200:
+                    // Update user status (if applicable)
+                    const statusUpdate = await Admin.updateStatus(data.email);
+                    if (statusUpdate) {
+                        const authInstance = Auth.run({
+                            cookieOptions: {
+                                httpOnly: true,
+                                path: '/',
+                                secure: false, // Change to `true` in production
+                                sameSite: 'lax',
+                                maxAge: 60 * 60 * 1000
+                            }
+                        });
+
+                        // Extract user agent from the request headers
+                        const userAgent = req.headers['user-agent'];
+
+                        // Create a session for the user, passing the email and user-agent for unique device identification
+                        const sessionId = await authInstance.createSession({
+                            from: data.email,
+                            column: 'email',
+                            userAgent: userAgent
+                        });
+                        // Set the cookie header with the generated session ID
+                        res.writeHead(200, {
+                            'Set-Cookie': authInstance.buildCookieHeader(sessionId),
+                            'Content-Type': 'application/json'
+                        });
                     }
-                });
-
-                // Extract user agent from the request headers
-                const userAgent = req.headers['user-agent'];
-
-                // Create a session for the user, passing the email and user-agent for unique device identification
-                const sessionId = await authInstance.createSession({
-                    from: data.email,
-                    column: 'email',
-                    userAgent: userAgent
-                });
-                // Set the cookie header with the generated session ID
-                res.writeHead(200, {
-                    'Set-Cookie': authInstance.buildCookieHeader(sessionId),
-                    'Content-Type': 'application/json'
-                });
-                // Redirect based on the user's role
-                const redirectUrl = await this.#redirectBasedOnRole(data.email, 'email');
-                // Send response with success and redirect URL
-                res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectUrl }));
-                return;
+                    res.end(JSON.stringify({ success: true, message: 'Login request successful', redirect: redirectData.url }));
+                    return;
+                case 403:
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: redirectData.message }));
+                    return;
             }
         } catch (err) {
             console.error(err);
@@ -140,12 +149,24 @@ class Admin {
     }
 
 
-    static async #redirectBasedOnRole(data, column) {
-        const result = await DB.run().select(['role']).from('admins').where([column, '=', data]).query();
+    static async #redirectBasedOnRoleAndStatus(data, column) {
+        const result = await DB.run().select(['admins.role', 'admins_activity.can_access'])
+            .from('admins')
+            .join('INNER JOIN', 'admins_activity')
+            .on('admins.aid', 'admins_activity.aid')
+            .where([column, '=', data]).query();
         const role = (result.getResults().length > 0) ? result.getResults()[0].role : false;
-        if (!role) throw new Error('Failed to resolve admin roles');
+        const canAccess = (result.getResults().length > 0) ? result.getResults()[0].can_access : false;
+        if (!role) {
+            let message = 'Invalid account type'
+            return JSON.stringify({ status: 403, message: message });
+        }
+        if (!Boolean(+canAccess)) {
+            let message = 'Your account has not yet been approved. Kindly contact the administrator'
+            return JSON.stringify({ status: 403, message: message });
+        }
         if (Object.hasOwnProperty.call(Routes, role)) {
-            return Routes[role]['default'];
+            return JSON.stringify({ status: 200, url: Routes[role]['default'] });
         }
         return '';
     }

@@ -1,7 +1,6 @@
 import Utils from '../global/utils.js';
 import { RenderAdminsTable } from '../spadmin/renders.js';
 import Forms from "../spadmin/forms.js";
-
 class DataHandler {
 
 
@@ -19,10 +18,9 @@ class DataHandler {
 
         const modal = new bootstrap.Modal(document.getElementById('modal'))
         const heading = document.querySelector('#modal .modal-header h5');
-        const modalBody = document.querySelector('#modal .modal-body');
         const modalPosition = document.querySelector('#modal .modal-dialog');
-        modalBody.innerHTML = Forms.AdminUpdate();
         const form = document.querySelector('#modal form')
+        form.innerHTML = Forms.AdminUpdate();
         const firstname = document.querySelector('#modal form input[name="firstname"]');
         const lastname = document.querySelector('#modal form input[name="lastname"]');
         const role = document.querySelector('#modal form select[name="role"]');
@@ -58,7 +56,7 @@ class DataHandler {
     }
 
     static async getAdminRegistrationForm() {
-        const modalBody = document.querySelector('#modal .modal-body');
+        const form = document.querySelector('#modal .modal-body form');
         const heading = document.querySelector('#modal .modal-header h5');
         const registerBtn = document.querySelector('.registerAdminBtn');
         const modalPosition = document.querySelector('#modal .modal-dialog');
@@ -66,10 +64,12 @@ class DataHandler {
         Utils.classListActions('add', ['modal-dialog-centered'], modalPosition);
 
         registerBtn.addEventListener('click', () => {
-            modalBody.innerHTML = Forms.AdminRegistaration();
-            modalBody.setAttribute('id', 'admin-registration');
+            form.innerHTML = Forms.AdminRegistaration();
+            form.setAttribute('id', 'admin-registration');
             heading.innerHTML = 'Admin Registration Form'
         })
+
+
     }
 
     static getAdminDeletePrompt() {
@@ -107,6 +107,15 @@ class DataHandler {
                 resolve(false);
             };
         });
+    }
+
+    static getAdminAccess(data) {
+        if (data.success) {
+            Utils.displayToastSuccess(data.message, false, 6000)
+        } else {
+            Utils.displayToastError(data.message, false, 6000);
+        }
+        return;
     }
 
 

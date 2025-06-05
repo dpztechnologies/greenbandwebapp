@@ -52,7 +52,7 @@ class RenderAdminsTable extends Tables {
                 <td class="d-none d-md-table-cell">
                     <div class="d-flex justify-content-center">
                         <div class="form-check form-switch">
-                            <input class="form-check-input form-check-lg" id="adminCanAccess" style="transform: scale(1.5);"
+                            <input class="form-check-input form-check-lg adminCanAccess" style="transform: scale(1.5);"
                                 type="checkbox" id="flexSwitch" ${isChecked}>
                         </div>
                     </div>

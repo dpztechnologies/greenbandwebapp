@@ -10,7 +10,8 @@ const Endpoints = {
     'admin-count': '/admins/count',
     'admin-paginate': '/admins/paginate',
     'search-admin': '/admins/search',
-    'delete-admin': '/admins/delete'
+    'delete-admin': '/admins/delete',
+    'admin-access': '/admins/allow-access'
 }
 
 export default Endpoints;

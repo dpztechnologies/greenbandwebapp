@@ -24,6 +24,8 @@
     --heading-font-size: 30px;
     --sub-heading-font-size: 22px;
     --default-font-size: 16px;
+    --extra-large-font-size: 120px;
+    --large-font-size: 48px;
     --medium-font-size: 18px;
     --small-font-size: 12px;
     --default-border-radius: 16px;
@@ -46,4 +48,5 @@
     --info-dark: #1c5c97;
     --danger: #F72B50;
     --white: #ffffff;
+    --dark: #3D4465;
 }

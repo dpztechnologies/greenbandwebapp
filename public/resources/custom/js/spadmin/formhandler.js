@@ -22,17 +22,18 @@ class FormHandler {
                         Utils.disableElement(formButton, false);
                         Utils.handleRedirect(data);
                         Utils.handleFormEvents(formRegister, Utils.getFormId(form), formEvents)
+                        Utils.reload(6000);
                     })
                 } else {
                     let error = JSON.parse(await response.text());
-                    if (response.status === 400) {
-                        Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
-                        return Utils.handleFormErrors(error);
-                    } else {
-                        let message = error.message;
-                        let errorText = error.error
-                        Utils.displayToastError(`${message} ${errorText}`)
-                        return;
+                    switch (response.status) {
+                        case 400:
+                            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                            return Utils.handleFormErrors(error);
+                        default:
+                            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                            Utils.displayToastError(`${error.message} ${error.error}`, false, 3000)
+                            return;
                     }
                 }
             });

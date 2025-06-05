@@ -16,6 +16,7 @@ const endPoints = {
     'admins-paginate': Utils.getEndpoint('admin-paginate'),
     'search-admin': Utils.getEndpoint('search-admin'),
     'delete-admin': Utils.getEndpoint('delete-admin'),
+    'admin-access': Utils.getEndpoint('admin-access'),
     'admins-count': '/admins/count',
     'view-admin': '/view/admin'
 }
@@ -43,13 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     */
     LogoutController.logout('logoutController');
 
-
-    /**
-     * ---------------------------------------------------------------------------------------------------------------------
-     * HANDLE FORM REQUESTS
-     * ---------------------------------------------------------------------------------------------------------------------
-    */
-    FormHandler.handleRequests();
 
     /**
      * ---------------------------------------------------------------------------------------------------------------------
@@ -117,9 +111,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         .setUrl(endPoints['view-admin'])
         .editRow();
     /**
+     * Access handler
+     */
+    Tables.call(DataHandler.getAdminAccess)
+        .setUrl(endPoints['admin-access'])
+        .grantAccess();
+    /**
      * Render Admins Registration forms
      */
     DataHandler.getAdminRegistrationForm()
+
+
+    /**
+       * ---------------------------------------------------------------------------------------------------------------------
+       * HANDLE FORM REQUESTS
+       * ---------------------------------------------------------------------------------------------------------------------
+      */
+    FormHandler.handleRequests();
 })
 
 

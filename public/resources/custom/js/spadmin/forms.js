@@ -45,8 +45,6 @@ class Forms {
 
     static AdminUpdate() {
         return `
-        <form method="POST" class="py-3" enctype="multipart/form-data"
-                    class="needs-validation mt-3 mt-lg-0" novalidate>
             <div class="row g-3 mx-0">
                 <div class="col-lg-6 form-group my-3">
                     <input type="text" class="form-control py-3" name="firstname" placeholder="Firstname" />
@@ -78,7 +76,6 @@ class Forms {
                     </button>
                 </div>
             </div>
-        </form>
     `
     }
 

@@ -103,6 +103,33 @@ class Queries {
         return await this.viewAdmins(10, [], email);
     }
 
+
+    static async allowAdminAccess(id) {
+        let query = await DB.run()
+            .select(['admins.firstname', 'admins_activity.can_access'])
+            .from('admins_activity')
+            .join('INNER JOIN', 'admins')
+            .on('admins_activity.aid', 'admins.aid')
+            .where(['admins_activity.aid', '=', id])
+            .query();
+        const canAccess = query.getResults()[0].can_access;
+        const firstname = query.getResults()[0].firstname;
+        if (!Boolean(+canAccess)) {
+            query = await DB.run().update('admins_activity').set({ 'can_access': 1 }).where(['admins_activity.aid', '=', id]).query();
+            if (query) {
+                return { success: true, message: `${firstname} has been granted access successfully` };
+            }
+            return { success: false, message: `Failed to grant access to ${firstname}` };
+        } else {
+            query = await DB.run().update('admins_activity').set({ 'can_access': 0 }).where(['admins_activity.aid', '=', id]).query();
+            if (query) {
+                return { success: true, message: `${firstname}'s access has been revoked successfully` };
+            }
+            return { success: false, message: `Failed to deactivate admin ${firstname}` };
+        }
+
+    }
+
 }
 
 

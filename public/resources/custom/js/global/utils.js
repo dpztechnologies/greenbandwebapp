@@ -123,7 +123,7 @@ class Utils {
      * @param {Function} ev - Callback function to invoke after the toast is hidden.
      * @returns {void}
      */
-    static displayToastMessage(selector, message, color, ev) {
+    static displayToastMessage(selector, message, color, ev, timeout = 2000) {
         try {
             const toast = document.querySelector(selector);
             const removeList = ['bg-success', 'bg-danger', 'bg-info', 'bg-primary', 'bg-light'];
@@ -136,7 +136,7 @@ class Utils {
             setTimeout(() => {
                 toastBootstrap.hide();
                 Utils.executeCallback(ev)
-            }, 2000)
+            }, timeout)
             return;
         } catch (err) {
             console.error(err);
@@ -374,11 +374,30 @@ class Utils {
         }
     }
 
-    static getError(message, error, callback) {
+    static getError(message, error, callback, timeout) {
         Utils.displayToastMessage("#alert-toast",
             `${message}. Error: ${error}`,
             "bg-danger",
-            Utils.executeCallback(callback)
+            Utils.executeCallback(callback),
+            timeout
+        )
+    }
+
+    static displayToastSuccess(message, callback, timeout) {
+        Utils.displayToastMessage("#alert-toast",
+            `${message}`,
+            "bg-success",
+            Utils.executeCallback(callback),
+            timeout
+        )
+    }
+
+    static displayToastError(message, callback, timeout) {
+        Utils.displayToastMessage("#alert-toast",
+            `${message}`,
+            "bg-danger",
+            Utils.executeCallback(callback),
+            timeout
         )
     }
 
@@ -392,13 +411,6 @@ class Utils {
     }
 
 
-    static displayToastError(err) {
-        Utils.getError('Something unexpected happened while processing your request', err, () => {
-            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
-        })
-        return
-    }
-
 
     static toggleSidebar(selector) {
         const triggers = document.querySelectorAll(selector);
@@ -409,6 +421,12 @@ class Utils {
                 return;
             }
         })
+    }
+
+    static reload(timeout) {
+        setTimeout(() => {
+            location.reload();
+        }, timeout)
     }
 
 

@@ -28,6 +28,34 @@ class APIAccess {
         });
     }
 
+    static get404Page(req, res) {
+        fs.readFile(utilities.getFilePath("error404"), (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            res.end();
+        });
+    }
+    static get403Page(req, res) {
+        fs.readFile(utilities.getFilePath("error403"), (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            res.end();
+        });
+    }
+    static get400Page(req, res) {
+        fs.readFile(utilities.getFilePath("error400"), (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            res.end();
+        });
+    }
+    static get500Page(req, res) {
+        fs.readFile(utilities.getFilePath("error500"), (err, data) => {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.write(data);
+            res.end();
+        });
+    }
     /**
      * ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
      * SUPER ADMIN
@@ -117,6 +145,18 @@ class APIAccess {
         } catch (error) {
             console.error(error);
             return utilities.sendErrors(error, res);
+        }
+    }
+
+
+    static async allowAdminAccess(req, res) {
+        try {
+            const { id } = req.query;
+            const query = await Query.allowAdminAccess(id);
+            return utilities.sendResponse(query, res);
+        } catch (error) {
+            console.error(error);
+            return utilities.sendErrors(error, res)
         }
     }
 

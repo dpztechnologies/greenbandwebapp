@@ -25,14 +25,17 @@ class FormHandler {
                     })
                 } else {
                     let error = JSON.parse(await response.text());
-                    if (response.status === 400) {
-                        Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
-                        return Utils.handleFormErrors(error);
-                    } else {
-                        let message = error.message;
-                        let errorText = error.error
-                        Utils.displayToastError(`${message} ${errorText}`)
-                        return;
+                    switch (response.status) {
+                        case 400:
+                            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                            return Utils.handleFormErrors(error);
+                        case 403:
+                            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                            return Utils.displayToastError(`Login request failed:${error.message}`, false, 10000)
+                        default:
+                            Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
+                            Utils.displayToastError(`${error.message} ${error.error}`, false, 3000)
+                            return;
                     }
                 }
             });

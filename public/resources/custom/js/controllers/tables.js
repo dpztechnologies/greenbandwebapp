@@ -194,6 +194,7 @@ class TableController extends TableComponents {
     }
 
 
+
     async deleteRow(callback) {
         const table = document.querySelector('table');
         table.addEventListener('click', async (e) => {
@@ -206,6 +207,7 @@ class TableController extends TableComponents {
                 const params = `?id=${id}`;
                 this.tableCallback(this.url + params);
                 Utils.displayToastMessage('.toast', 'Record deleted successfully', 'bg-info');
+                Utils.reload(6000);
             }
         });
         return this;
@@ -226,6 +228,24 @@ class TableController extends TableComponents {
                 })
             })
         })
+        return
+    }
+
+
+    grantAccess() {
+        const adminCanAccess = document.querySelectorAll('.adminCanAccess');
+        adminCanAccess.forEach(accessCheck => {
+            accessCheck.addEventListener('change', (e) => {
+                const id = TableController.getIdFromTrow(accessCheck);
+                const params = `?id=${id}`;
+                fetch(this.url + params).then(res => {
+                    res.json().then(data => {
+                        this.tableCallback(data);
+                    })
+                })
+            })
+        })
+        return;
     }
 
 
