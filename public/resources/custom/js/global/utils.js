@@ -430,6 +430,53 @@ class Utils {
     }
 
 
+    /**
+     * Lazy loads content within an element
+     * @param {*} elem 
+     * @param {*} beforeLoadCallback - Must include a target parameter
+     * @param {*} afterLoadCallback - Must include a target parameter
+     * 
+     * @example
+     * 
+     * function beforeLoadCallback(target) {
+    target.innerHTML = `
+          <div class="d-flex align-items-center justify-content-center gap-2 flex-column">
+            <div class="spinner-border text-secondary" role="status" style="width: 1.5rem; height: 1.5rem;">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span>Please wait...</span>
+          </div>
+        `;
+        }
+
+        function afterLoadCallback(target) {
+            setTimeout(() => {
+                adminHeader.innerHTML = `
+        <h5 class="card-title">Admin Panel</h5>
+        <p class="card-text">Welcome! This content was lazy-loaded.</p>
+        `;
+                target.dataset.loaded = "true";
+            }, 3000);
+        }
+     */
+    static lazyLoadContent(elem, beforeLoadCallback, afterLoadCallback) {
+        const target = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && target.dataset.loaded === "false") {
+                    beforeLoadCallback(target);
+                    afterLoadCallback(target)
+                    observer.unobserve(target)
+                }
+            })
+        }, {
+            threshold: 0.1
+        })
+        observer.observe(target);
+        return;
+    }
+
+
 }
 
 

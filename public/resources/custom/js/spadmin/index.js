@@ -1,5 +1,5 @@
 import Utils from '../global/utils.js';
-import { RenderAdminProfile } from './renders.js';
+import { RenderAdminAvatar } from './renders.js';
 import { DataHandler } from './datahandler.js';
 import { TableController as Tables } from '../controllers/tables.js';
 import FormHandler from './formhandler.js';
@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     */
     await Utils.getData({
         endpoint: Utils.getEndpoint('current-admin'),
-        beforeSend: RenderAdminProfile.beforeSend,
-        success: RenderAdminProfile.success,
-        fail: RenderAdminProfile.fail,
-        handler: RenderAdminProfile.display,
+        beforeSend: RenderAdminAvatar.beforeSend,
+        success: RenderAdminAvatar.success,
+        fail: RenderAdminAvatar.fail,
+        handler: RenderAdminAvatar.display,
     })
 
     /**

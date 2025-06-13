@@ -11,7 +11,9 @@ const Endpoints = {
     'admin-paginate': '/admins/paginate',
     'search-admin': '/admins/search',
     'delete-admin': '/admins/delete',
-    'admin-access': '/admins/allow-access'
+    'admin-access': '/admins/allow-access',
+    'show-admin': '/super-admin/admins/show',
+    'show-admin-profile': '/admins/profile'
 }
 
 export default Endpoints;

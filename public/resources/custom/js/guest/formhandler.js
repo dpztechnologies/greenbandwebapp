@@ -31,7 +31,7 @@ class FormHandler {
                             return Utils.handleFormErrors(error);
                         case 403:
                             Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
-                            return Utils.displayToastError(`Login request failed:${error.message}`, false, 10000)
+                            return Utils.displayToastError(`<strong>Login failed:</strong>${error.message}`, false, 20000)
                         default:
                             Utils.displayButtonAnimation(false, buttonOnReceivedFeedback);
                             Utils.displayToastError(`${error.message} ${error.error}`, false, 3000)

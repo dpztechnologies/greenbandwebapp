@@ -3,7 +3,8 @@ const { Validator } = require('../middlewares/validate.cjs');
 const { Sanitizer } = require('../middlewares/sanitize.cjs');
 const { Admin } = require("../controllers/admin.cjs");
 const { Auth } = require('../middlewares/auth.cjs');
-const { APIAccess } = require('./apiaccess.cjs')
+const { API } = require('./api.cjs');
+const { getSuperAdminRoute } = require("../helpers/functions.cjs");
 const app = routeProvider();
 
 
@@ -27,46 +28,44 @@ app.use((req, res, next) => {
  */
 
 
-
-
 /**
  * Home/Landing page
  */
 
 app.get("/", [], (req, res) => {
-    return APIAccess.getHomePage(req, res)
+    return API.getHomePage(req, res)
 });
 
 /**
  * Login page
  */
 app.get("/login", [], (req, res) => {
-    return APIAccess.getLoginPage(req, res);
+    return API.getLoginPage(req, res);
 });
 
 /**
  * Error 404 page
  */
 app.get("/404", [], (req, res) => {
-    return APIAccess.get404Page(req, res);
+    return API.get404Page(req, res);
 });
 /**
  * Error 403 page
  */
 app.get("/403", [], (req, res) => {
-    return APIAccess.get403Page(req, res);
+    return API.get403Page(req, res);
 });
 /**
  * Error 400 page
  */
 app.get("/400", [], (req, res) => {
-    return APIAccess.get400Page(req, res);
+    return API.get400Page(req, res);
 });
 /**
  * Error 500 page
  */
 app.get("/500", [], (req, res) => {
-    return APIAccess.get500Page(req, res);
+    return API.get500Page(req, res);
 });
 
 /**
@@ -76,47 +75,52 @@ app.get("/500", [], (req, res) => {
  */
 
 
-app.get('/super-admin/admins', [Auth.authenticate], async (req, res,) => {
-    return await APIAccess.getAdminsPage(req, res)
+app.get(getSuperAdminRoute('default'), [Auth.authenticate], async (req, res,) => {
+    return await API.getAdminsPage(req, res)
 })
 
 
-app.get('/view/admins', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.getAdmins(req, res)
+app.get(getSuperAdminRoute('view-admins'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.getAdmins(req, res)
 });
 
 
-app.get('/admins/count', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.getAdminsCount(req, res);
+app.get(getSuperAdminRoute('admin-count'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.countAdmins(req, res);
 });
 
-app.get('/view/current-admin', [Auth.authenticate], async (req, res) => {
-    return await APIAccess.getCurrentAdmin(req, res)
+app.get(getSuperAdminRoute('current-admin'), [Auth.authenticate], async (req, res) => {
+    return await API.getCurrentAdmin(req, res)
 })
 
-app.get('/view/admin', [Auth.authenticate], async (req, res) => {
-    return await APIAccess.getAdmin(req, res)
+app.get(getSuperAdminRoute('view-admin'), [Auth.authenticate], async (req, res) => {
+    return await API.getAdmin(req, res)
 })
 
-app.get('/admins/paginate', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.getAdminsPaginate(req, res);
-})
-
-
-app.get('/admins/search', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.getAdminSearch(req, res);
-})
-
-app.get('/admins/delete', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.deleteAdmin(req, res);
-})
-
-app.get('/admins/allow-access', [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
-    return await APIAccess.allowAdminAccess(req, res);
+app.get(getSuperAdminRoute('admins-paginate'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.paginateAdmin(req, res);
 })
 
 
+app.get(getSuperAdminRoute('admins-search'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.searchAdmin(req, res);
+})
 
+app.get(getSuperAdminRoute('delete-admin'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.deleteAdmin(req, res);
+})
+
+app.get(getSuperAdminRoute('admin-access'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.allowAdminAccess(req, res);
+})
+
+app.get(getSuperAdminRoute('show-admin'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.getAdminProfilePage(req, res);
+})
+
+app.get(getSuperAdminRoute('show-admin-profile'), [Auth.authenticate, Sanitizer.sanitize], async (req, res) => {
+    return await API.getAdmin(req, res);
+})
 
 
 

@@ -11,7 +11,9 @@ const Routes = {
         'admins-paginate': '/admins/paginate',
         'admins-search': '/admins/search',
         'delete-admin': '/admins/delete',
-        'admin-access': '/admins/allow-access'
+        'admin-access': '/admins/allow-access',
+        'show-admin': '/super-admin/admins/show',
+        'show-admin-profile': '/admins/profile'
     },
     'System Admin': {
         'users': '/system-admin/users',

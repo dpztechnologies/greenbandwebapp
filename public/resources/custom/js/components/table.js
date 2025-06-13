@@ -27,10 +27,10 @@ class TableComponents {
         return false
     }
 
-    static tableActions() {
+    static tableActions(viewRoute = "") {
         return `
         <div class="d-flex justify-content-lg-start justify-content-end align-items-center">
-                        <a class="me-2 view" title="View">
+                        <a class="me-2 view" title="View" href="${viewRoute}">
                             <!-- Eye Icon -->
                            <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path

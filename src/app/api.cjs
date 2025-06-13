@@ -1,11 +1,11 @@
 const fs = require("fs");
-const utilities = require("../modules/utilities.cjs");
 const { Auth } = require('../middlewares/auth.cjs');
-const Query = require('../controllers/queries.cjs');
-const { view } = require('../helpers/functions.cjs');
+const { view, getFilePath } = require('../helpers/functions.cjs');
+const Request = require('../modules/request.cjs');
+const { Admin } = require("../controllers/admin.cjs");
 
 
-class APIAccess {
+class API {
 
     /**
      * ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -13,7 +13,7 @@ class APIAccess {
      * ```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````` 
      */
     static getHomePage(req, res) {
-        fs.readFile(utilities.getFilePath("home"), (err, data) => {
+        fs.readFile(getFilePath("home"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
@@ -21,7 +21,7 @@ class APIAccess {
     }
 
     static getLoginPage(req, res) {
-        fs.readFile(utilities.getFilePath("login"), (err, data) => {
+        fs.readFile(getFilePath("login"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
@@ -29,28 +29,28 @@ class APIAccess {
     }
 
     static get404Page(req, res) {
-        fs.readFile(utilities.getFilePath("error404"), (err, data) => {
+        fs.readFile(getFilePath("error404"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
         });
     }
     static get403Page(req, res) {
-        fs.readFile(utilities.getFilePath("error403"), (err, data) => {
+        fs.readFile(getFilePath("error403"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
         });
     }
     static get400Page(req, res) {
-        fs.readFile(utilities.getFilePath("error400"), (err, data) => {
+        fs.readFile(getFilePath("error400"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
         });
     }
     static get500Page(req, res) {
-        fs.readFile(utilities.getFilePath("error500"), (err, data) => {
+        fs.readFile(getFilePath("error500"), (err, data) => {
             res.writeHead(200, { "Content-Type": "text/html" });
             res.write(data);
             res.end();
@@ -72,10 +72,10 @@ class APIAccess {
         try {
             const { limit } = req.query
             const email = await Auth.getEmailFromSession(req, res);
-            const query = await Query.viewAdmins(parseInt(limit), [], email);
-            return utilities.sendResults(query, res);
+            const query = await Admin.getAll(parseInt(limit), [], email);
+            return Request.sendResults(query, res);
         } catch (error) {
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
@@ -83,10 +83,10 @@ class APIAccess {
     static async getCurrentAdmin(req, res) {
         try {
             const email = await Auth.getEmailFromSession(req, res);
-            const query = await Query.viewAdmin(email, ['admins.firstname', 'admins.role'])
-            return utilities.sendResults(query, res);
+            const query = await Admin.profile(['admins.firstname', 'admins.role'], email, 'email',)
+            return Request.sendResults(query, res);
         } catch (error) {
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
@@ -94,45 +94,45 @@ class APIAccess {
     static async getAdmin(req, res) {
         try {
             const id = req.query
-            const query = await Query.viewAdmin(id.id, [], 'aid');
-            return utilities.sendResults(query, res);
+            const query = await Admin.profile([], id.id, 'aid');
+            return Request.sendResults(query, res);
         } catch (error) {
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
 
-    static async getAdminsCount(req, res) {
+    static async countAdmins(req, res) {
         try {
-            const count = await Query.viewAdminsCount();
-            return utilities.sendResults(count, res);
+            const count = await Admin.count();
+            return Request.sendResults(count, res);
         } catch (error) {
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
 
-    static async getAdminsPaginate(req, res) {
+    static async paginateAdmin(req, res) {
         try {
             const { currentPage, limit } = req.query;
             const email = await Auth.getEmailFromSession(req, res);
-            const query = await Query.viewAdminsPaginate(currentPage, limit, [], email);
-            return utilities.sendResults(query, res);
+            const query = await Admin.paginate(currentPage, limit, [], email);
+            return Request.sendResults(query, res);
         } catch (error) {
             console.error(error);
-            return utilities.sendErrors(error, res)
+            return Request.sendErrors(error, res)
         }
     }
 
 
-    static async getAdminSearch(req, res) {
+    static async searchAdmin(req, res) {
         try {
             const { keyword } = req.query;
-            const query = await Query.searchAdmin(keyword);
-            return utilities.sendResults(query, res);
+            const query = await Admin.search(keyword);
+            return Request.sendResults(query, res);
         } catch (error) {
             console.error(error);
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
@@ -140,11 +140,11 @@ class APIAccess {
         try {
             const { id } = req.query;
             const email = await Auth.getEmailFromSession(req, res);
-            const query = await Query.deleteAdmin(id, email);
-            return utilities.sendResults(query, res);
+            const query = await Admin.delete(id, email);
+            return Request.sendResults(query, res);
         } catch (error) {
             console.error(error);
-            return utilities.sendErrors(error, res);
+            return Request.sendErrors(error, res);
         }
     }
 
@@ -152,14 +152,22 @@ class APIAccess {
     static async allowAdminAccess(req, res) {
         try {
             const { id } = req.query;
-            const query = await Query.allowAdminAccess(id);
-            return utilities.sendResponse(query, res);
+            const query = await Admin.grantAccess(id, req);
+            return Request.sendResponse(query, res);
         } catch (error) {
             console.error(error);
-            return utilities.sendErrors(error, res)
+            return Request.sendErrors(error, res)
         }
+    }
+
+
+    static async getAdminProfilePage(req, res) {
+        const html = await view('pages/spadmin/show.html');
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.write(html);
+        res.end();
     }
 
 }
 
-module.exports = { APIAccess }
+module.exports = { API }

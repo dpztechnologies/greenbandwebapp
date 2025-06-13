@@ -50,7 +50,8 @@ const FilePaths = {
     error400: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '400.html'),
     error500: Path.getFile(RootDir, 'public', 'views', 'pages', 'error', '500.html'),
     register: Path.getFile(RootDir, 'public', 'views', 'pages', 'guest', 'register.html'),
-    'super-admin/admins': Path.getFile(RootDir, 'public', 'views', 'pages', 'spadmin', 'admins.html')
+    'super-admin/admins': Path.getFile(RootDir, 'public', 'views', 'pages', 'spadmin', 'admins.html'),
+    'super-admin/show-admin': Path.getFile(RootDir, 'public', 'views', 'pages', 'spadmin', 'show.html')
 }
 
 

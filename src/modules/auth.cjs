@@ -1,6 +1,8 @@
 const crypto = require('crypto')
 const DB = require('./database.cjs');
 
+const dotenv = require('dotenv').config('../../.env')
+
 /**
  * Auth class handles session-based authentication using cookies and a database-backed session store.
  */
@@ -168,6 +170,13 @@ class Auth {
     }
 
 
+    static redirect(res, route) {
+        res.writeHead(301, { Location: `${process.env.ORIGIN}:${process.env.PORT}${route}` });
+        res.end();
+        return;
+    }
+
+
     /**
      * Retrieves a session from the request cookies.
      * @param {Object} req - The HTTP request object.
@@ -176,7 +185,7 @@ class Auth {
     async getSessionFromRequest(req) {
         const cookies = this.parseCookies(req.headers.cookie);
         const sessionId = cookies[this.cookieName];
-        if (!sessionId) throw new Error('No session Id');
+        if (!sessionId) return false;
         const userAgent = req.headers['user-agent'];
         const query = await DB.run().select(['email']).from('sessions').where(['id', '=', sessionId]).query()
         if (query.getResults().length > 0) {
@@ -253,23 +262,26 @@ class Auth {
             const session = await Auth.run().getSessionFromRequest(req);
             // If no session is found, reject the request
             if (!session || session.length === 0) {
-                return Auth.reject(res, 'Session not established');
+                console.error('Session not established');
+                return Auth.redirect(res, '/login');
             }
             // Check if the session has expired by comparing with the expiration time
             const expiresAt = session[0].expires_at;
             if (new Date(expiresAt) < new Date()) {
-                return Auth.reject(res, 'Your session has expired');
+                console.error('Your Session has expired');
+                return Auth.redirect(res, '/login');
             }
 
             // If email exists, return it, otherwise reject
             const email = session[0].email;
             if (!email) {
-                return Auth.reject(res, 'Your session has expired');
+                console.error('Your session has expired');
+                return Auth.redirect(res, '/login');
             }
             return email;
         } catch (err) {
             console.error('Error fetching email from session:', err);
-            return Auth.reject(res, `Error fetching email from session: ${err}`);
+            return Auth.redirect(res, '/login');
         }
     }
 

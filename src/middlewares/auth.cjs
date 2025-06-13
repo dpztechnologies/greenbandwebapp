@@ -10,6 +10,7 @@ const crypto = require('crypto')
 
 
 
+
 class AuthMiddleware extends Auth {
 
     /**
@@ -39,21 +40,24 @@ class AuthMiddleware extends Auth {
 
             const session = query.getResults();
             if (!session || !session.length) {
-                return Auth.reject(res, 'Session not valid or expired');
+                return Auth.redirect(res, '/login');
             }
 
             const result = await DB.run()
-                .select(['role'])
+                .select(['admins.role', 'admins_activity.can_access'])
                 .from('admins')
+                .join("INNER JOIN", 'admins_activity')
+                .on('admins.aid', 'admins_activity.aid')
                 .where(['email', '=', email])
                 .query();
 
             const roles = await result.getResults();
             if (!roles.length) {
-                return Auth.reject(res, 'Role not found');
+                return Auth.redirect(res, '/login');
             }
 
             const role = roles[0].role;
+            const canAccess = roles[0].can_access
             const allowedRoutes = Routes[role];
 
             // ✅ FIXED: Extract just the pathname for matching
@@ -65,7 +69,11 @@ class AuthMiddleware extends Auth {
             });
 
             if (!isAllowed) {
-                return Auth.reject(res, `Access to invalid route ${pathname}`);
+                return Auth.redirect(res, '/login')
+            }
+
+            if (!Boolean(canAccess)) {
+                return Auth.redirect(res, '/login')
             }
 
             next();

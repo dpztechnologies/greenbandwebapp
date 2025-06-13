@@ -65,6 +65,23 @@ select:focus {
     /* top spacing for mobile */
 }
 
+.opacity-10 {
+    opacity: 0.1;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+.page-link,
+.page-link:hover {
+    color: var(--primary);
+}
+
+.dropdown-toggle:after {
+    content: none !important;
+}
+
 /* Dark */
 .text-dark {
     color: var(--dark) !important;
@@ -87,6 +104,22 @@ select:focus {
 .btn-primary {
     border-color: var(--primary) !important;
 }
+
+.btn-outline-primary {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important
+}
+
+.btn-outline-primary:focus,
+.active>.page-link,
+.page-link.active,
+.btn-outline-primary.active,
+.btn-outline-primary:hover {
+    background-color: var(--primary) !important;
+    color: var(--white) !important;
+    border-color: var(--primary) !important;
+}
+
 
 .btn-primary:hover {
     background-color: var(--primary-dark) !important;
@@ -193,6 +226,14 @@ td {
 .avatar {
     width: 45px;
     height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-lg {
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;

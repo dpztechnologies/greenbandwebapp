@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin | Users</title>
+    <link rel="stylesheet" href="../../../resources/lib/bootstrap.css" />
+    <link rel="stylesheet" href="../../../resources/custom/css/style.css" />
+    <script src="../../../resources/lib/bootstrap.js"></script>
+</head>
+
+<body>
+    <!-- Toast -->
+    @include("public/views/components/toast.html")
+
+
+    <!-- Modal -->
+    @include("public/views/components/modals.html")
+
+
+    <!-- Sidebar -->
+    @include("public/views/components/sidebar.html")
+    <!-- Main content -->
+    <main class="container-fluid d-flex justify-content-xl-end">
+        <section class="col-xl-10 col-12 p-md-3 py-md-4 px-md-0 mt-md-1">
+            <!-- Navbar -->
+            @include("public/views/components/navbar.html")
+
+            <section class="ms-xl-5 my-4">
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb bg-white rounded" id="adminBreadcrumb">
+
+                </nav>
+
+                <!-- Header -->
+                <header class="my-4">
+                    <div class="card">
+                        <div class="card-body" id="adminHeader" data-loaded="false">
+
+                        </div>
+                    </div>
+                </header>
+
+
+                <!-- Admin description -->
+                <section class="row">
+
+                    <!-- About -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-light border-bottom-radius-0">
+                                <h6 class="text-primary text-medium p-3">About</h6>
+                            </div>
+                            <div class="card-body p-0" id="aboutAdmin">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="col-md-8 mt-4 mt-lg-0">
+                        <div class="card">
+                            <div class="card-header bg-light border-bottom-radius-0">
+                                <h6 class="text-primary text-medium p-3">Activity</h6>
+                            </div>
+                            <div class="card-body p-0" id="adminActivity">
+
+
+                            </div>
+                        </div>
+                </section>
+            </section>
+        </section>
+    </main>
+
+
+    <script type="module" src="../../../resources/custom/js/spadmin/profile.js"></script>
+
+
+</body>
+
+</html>
